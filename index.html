@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion || Inscription</title>
+    <!-- font awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- css stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="#" id="signupForm">
+                <h1>Créer un compte</h1>
+                <div class="step-indicator">
+                    <span class="step active"></span>
+                    <span class="step"></span>
+                    <span class="step"></span>
+                </div>
+                <div class="step-content" id="step1">
+                    <div class="infield">
+                        <input type="text" placeholder="Nom" name="nom" required/>
+                    </div>
+                    <div class="infield">
+                        <input type="text" placeholder="Prénom" name="prenom" required/>
+                    </div>
+                    <div class="infield">
+                        <input type="number" placeholder="Âge" name="age" min="1" max="120" required/>
+                    </div>
+                    <button type="button" onclick="nextStep(1)">Suivant</button>
+                </div>
+                <div class="step-content" id="step2" style="display:none;">
+                    <div class="infield">
+                        <select name="genre" required>
+                            <option value="">Sélectionnez le genre</option>
+                            <option value="homme">Homme</option>
+                            <option value="femme">Femme</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="infield">
+                        <input type="date" placeholder="Date de naissance" name="dateNaissance" required/>
+                    </div>
+                    <button type="button" onclick="prevStep(2)">Précédent</button>
+                    <button type="button" onclick="nextStep(2)">Suivant</button>
+                </div>
+                <div class="step-content" id="step3" style="display:none;">
+                    <div class="infield">
+                        <input type="password" placeholder="Mot de passe" name="password" required/>
+                    </div>
+                    <div class="infield">
+                        <input type="password" placeholder="Confirmer le mot de passe" name="confirmPassword" required/>
+                    </div>
+                    <button type="button" onclick="prevStep(3)">Précédent</button>
+                    <button type="submit">S'inscrire</button>
+                </div>
+            </form>
+        </div>
+        <!-- Le reste du code HTML reste inchangé -->
+    </div>
+
+    <script>
+        // Ajoutez ici le code JavaScript pour la gestion des étapes
+        function nextStep(currentStep) {
+            document.getElementById('step' + currentStep).style.display = 'none';
+            document.getElementById('step' + (currentStep + 1)).style.display = 'block';
+            document.querySelectorAll('.step-indicator .step')[currentStep].classList.add('active');
+        }
+
+        function prevStep(currentStep) {
+            document.getElementById('step' + currentStep).style.display = 'none';
+            document.getElementById('step' + (currentStep - 1)).style.display = 'block';
+            document.querySelectorAll('.step-indicator .step')[currentStep - 1].classList.remove('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in || Sign up from</title>
+     <!-- font awesome icons -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- css stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="#">
+                <h1>Créer un compte</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>Ou utilisez votre adresse mail pour vous enregistrer</span>
+                <div class="infield">
+                    <input type="text" placeholder="Nom" />
+                    <label></label>
+                </div>
+                <div class="infield">
+                    <input type="email" placeholder="Email" name="email"/>
+                    <label></label>
+                </div>
+                <div class="infield">
+                    <input type="password" placeholder="Mdp" />
+                    <label></label>
+                </div>
+                <button>Sign Up</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="#">
+                <h1>Sign in</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your account</span>
+                <div class="infield">
+                    <input type="email" placeholder="Email" name="email"/>
+                    <label></label>
+                </div>
+                <div class="infield">
+                    <input type="password" placeholder="Mdp" />
+                    <label></label>
+                </div>
+                <a href="forget_password.php" class="forgot">Mod de passe oublié ?</a>
+                <button>Se connecter</button>
+            </form>
+        </div>
+        <div class="overlay-container" id="overlayCon">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Bon retour !</h1>
+                    <p>Pour vous connecter, rentrez vos identifiants</p>
+                    <button>S'enregistrer</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Bienvenue !</h1>
+                    <p>Entrez vos informations personnelles et venez vous entraîner !</p>
+                    <button>Se connecter</button>
+                </div>
+            </div>
+            <button id="overlayBtn"></button>
+        </div>
+    </div>
+
+    
+    
+    <!-- js code -->
+<script>
+    const container = document.getElementById('container');
+    const overlayBtn = document.getElementById('overlayBtn'); // Correction ici
+
+    overlayBtn.addEventListener('click', () => {
+        container.classList.toggle('right-panel-active');
+        overlayBtn.classList.remove('btnScaled');
+        window.requestAnimationFrame(() => { // Correction ici
+            overlayBtn.classList.add('btnScaled');
+        });
+    });
+</script>
+
+</body>
+</html>
