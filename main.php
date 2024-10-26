@@ -4,98 +4,83 @@ $personne = new UserBase();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['submit'])) {
+        // Filtrer les données et empêcher les failles XSS
+        $nom = htmlspecialchars($_POST['nom'] ?? '');
+        $prenom = htmlspecialchars($_POST['prenom'] ?? '');
+        $age = filter_var($_POST['age'] ?? '', FILTER_VALIDATE_INT, ["options" => ["min_range" => 1, "max_range" => 120]]);
+        $genre = htmlspecialchars($_POST['genre'] ?? '');
+        $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
+        $password = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirmPassword'] ?? '';
+        $dateNaissance = htmlspecialchars($_POST['dateNaissance'] ?? '');
+
         if ($_POST['submit'] == "sign up") {
-            // Récupération et validation des données du formulaire
-            $nom = $_POST['nom'] ?? '';
-            $prenom = $_POST['prenom'] ?? '';
-            $age = $_POST['age'] ?? '';
-            $genre = $_POST['genre'] ?? '';
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
-            $dateNaissance = $_POST['dateNaissance'] ?? '';
+            // Validation des données du formulaire
+            if ($nom && $prenom && $age && $genre && $email && $password && $confirmPassword && $dateNaissance) {
+                if ($password !== $confirmPassword) {
+                    echo "Les mots de passe ne correspondent pas.";
+                } else {
+                    // Hachage du mot de passe
+                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-            // Vérification que tous les champs nécessaires sont remplis
-            if ($nom && $prenom && $age && $genre && $email && $password) {
-                // Hachage du mot de passe
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                    // Préparation des données pour l'insertion
+                    $userData = [
+                        'nom' => $nom,
+                        'prenom' => $prenom,
+                        'age' => $age,
+                        'genre' => $genre,
+                        'email' => $email,
+                        'mot_de_passe' => $hashedPassword,
+                        'date_naissance' => $dateNaissance
+                    ];
 
-                // Préparation des données pour l'insertion
-                $userData = [
-                    'nom' => $nom,
-                    'prenom' => $prenom,
-                    'age' => $age,
-                    'genre' => $genre,
-                    'email' => $email,
-                    'mot_de_passe' => $hashedPassword,
-                    'date_naissance' => $dateNaissance
-                ];
-
-                try {
-                    // Tentative d'insertion de l'utilisateur
-                    if ($personne->insertUser($userData)) {
-                        echo "Inscription réussie !";
-                    } else {
+                    try {
+                        // Vérification que l'email n'existe pas déjà
+                        if ($personne->getUserByEmail($email)) {
+                            echo "L'email est déjà utilisé.";
+                        } else {
+                            // Tentative d'insertion de l'utilisateur
+                            if ($personne->insertUser($userData)) {
+                                echo "Inscription réussie !";
+                            } else {
+                                echo "Erreur lors de l'inscription.";
+                            }
+                        }
+                    } catch (Exception $e) {
+                        // En production, n'affichez pas l'erreur brute
                         echo "Erreur lors de l'inscription.";
                     }
-                } catch (Exception $e) {
-                    echo "Erreur : " . $e->getMessage();
                 }
             } else {
                 echo "Tous les champs sont requis.";
             }
         } elseif ($_POST['submit'] == "sign in") {
-            $email = $_POST['email'] ?? '';
-            $password = $_POST['password'] ?? '';
-
             if ($email && $password) {
-                // Récupération de l'utilisateur par email
-                $user = $personne->getUserByEmail($email);
+                try {
+                    // Récupération de l'utilisateur par email
+                    $user = $personne->getUserByEmail($email);
 
-                if ($user && password_verify($password, $user['mot_de_passe'])) {
-                    echo "Connexion réussie !";
-                    // Ici, vous pouvez démarrer une session, rediriger l'utilisateur, etc.
-                } else {
-                    echo "Email ou mot de passe incorrect.";
+                    if ($user && password_verify($password, $user['mot_de_passe'])) {
+                        session_start();
+                        $_SESSION['user_id'] = $user['id'];
+                        echo "Connexion réussie !";
+                        // Redirection vers le tableau de bord
+                        header("Location: dashboard.php");
+                        exit();
+                    } else {
+                        echo "Email ou mot de passe incorrect.";
+                    }
+                } catch (Exception $e) {
+                    echo "Erreur lors de la connexion.";
                 }
             } else {
                 echo "Email et mot de passe sont requis.";
             }
         }
     }
-}elseif ($_POST['submit'] == "sign in") {
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    if ($email && $password) {
-        try {
-            // Récupération de l'utilisateur par email
-            $user = $personne->getUserByEmail($email);
-
-            if ($user) {
-                // Vérification du mot de passe haché
-                if (password_verify($password, $user['mot_de_passe'])) {
-                    echo "Connexion réussie !";
-                    // Ici, vous pouvez démarrer une session, rediriger l'utilisateur, etc.
-                    // Par exemple :
-                    // session_start();
-                    // $_SESSION['user_id'] = $user['id'];
-                    // header("Location: dashboard.php");
-                    // exit();
-                } else {
-                    echo "Email ou mot de passe incorrect.";
-                }
-            } else {
-                echo "Email ou mot de passe incorrect.";
-            }
-        } catch (Exception $e) {
-            echo "Erreur lors de la connexion : " . $e->getMessage();
-        }
-    } else {
-        echo "Email et mot de passe sont requis.";
-    }
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
