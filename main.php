@@ -1,5 +1,10 @@
 <?php
 require_once 'UserBase.php';
+require 'vendor/autoload.php'; // Inclure l'autoloader de Composer pour PHPMailer
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 $personne = new UserBase();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -13,6 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password = $_POST['password'] ?? '';
         $confirmPassword = $_POST['confirmPassword'] ?? '';
         $dateNaissance = htmlspecialchars($_POST['dateNaissance'] ?? '');
+
 
         if ($_POST['submit'] == "sign up") {
             // Validation des données du formulaire
@@ -42,12 +48,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             // Tentative d'insertion de l'utilisateur
                             if ($personne->insertUser($userData)) {
                                 echo "Inscription réussie !";
+
+                                $personne->generateAndStoreVerificationCode($email);
+
+                                // Envoi de l'email de confirmation
+                                $mail = new PHPMailer(true);
+                                try {
+                                    // Paramètres du serveur SMTP
+                                    $mail->isSMTP();
+                                    $mail->Host = 'smtp.gmail.com'; // Remplacez par votre serveur SMTP
+                                    $mail->SMTPAuth = true;
+                                    $mail->Username = 'venouilthomas123456@gmail.com'; // Votre adresse email
+                                    $mail->Password = 'oyux ckfj pyqu xfpd'; // Votre mot de passe
+                                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                                    $mail->Port = 587;
+
+                                    // Destinataires
+                                    $mail->setFrom('venouilthomas123456@gmail.com', 'PlanniSport');
+                                    $mail->addAddress($email, "$prenom"); // Envoyer à l'utilisateur
+
+                                    // Contenu
+                                    $mail->isHTML(true);
+                                    $mail->Subject = 'Bienvenue !';
+                                    $mail->Body = "<h1>Coucou !</h1><p>Tu t'es créé un compte avec succès.</p><br><br>Voici ton code de vérification : " . ($personne->getRecordsByConditions('utilisateur', ['email' => $email])[0]['code_verification'] ?? 'Code non disponible');
+                                    $mail->AltBody = "Coucou ! Tu t'es créé un compte avec succès. Voici ton code de vérification : " . ($personne->getRecordsByConditions('utilisateur', ['email' => $email])[0]['code_verification'] ?? 'Code non disponible');
+
+
+                                    if ($mail->send()) {
+                                        // Redirection vers la page de confirmation après l'envoi de l'email
+                                        header("Location: verifier_code.php");
+                                        exit();
+                                    } else {
+                                        echo 'Le message n\'a pas pu être envoyé. Erreur : ' . $mail->ErrorInfo;
+                                    }
+                                } catch (Exception $e) {
+                                    echo "Le message n'a pas pu être envoyé. Erreur : {$mail->ErrorInfo}";
+                                }
                             } else {
                                 echo "Erreur lors de l'inscription.";
                             }
                         }
                     } catch (Exception $e) {
-                        // En production, n'affichez pas l'erreur brute
                         echo "Erreur lors de l'inscription.";
                     }
                 }
@@ -60,15 +101,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Récupération de l'utilisateur par email
                     $user = $personne->getUserByEmail($email);
 
-                    if ($user && password_verify($password, $user['mot_de_passe'])) {
+                    if ($user && password_verify($password, $user['mot_de_passe']) && $personne->isEmailVerified($email) == true) {
                         session_start();
                         $_SESSION['user_id'] = $user['id'];
                         echo "Connexion réussie !";
-                        // Redirection vers le tableau de bord
                         header("Location: dashboard.php");
                         exit();
                     } else {
                         echo "Email ou mot de passe incorrect.";
+                    }
+                    if($personne->isEmailVerified($email) ==false){
+                        echo "Code de vérification non validé";
                     }
                 } catch (Exception $e) {
                     echo "Erreur lors de la connexion.";

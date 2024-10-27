@@ -7,5 +7,7 @@ CREATE TABLE utilisateur (
     email TEXT NOT NULL UNIQUE,
     mot_de_passe TEXT NOT NULL,
     date_naissance TEXT,
-    date_inscription TEXT DEFAULT CURRENT_TIMESTAMP
+    date_inscription TEXT DEFAULT CURRENT_TIMESTAMP,
+    code_verification TEXT,
+    forget_password TEXT
 );
