@@ -48,6 +48,35 @@ class UserBase {
         }
     }
 
+
+    /**
+     *
+     * Vérifie si le mail existe
+     * 
+     * @param string $email le mail de l'utilisateur
+     * @return bool True si le mail existe dans la base de données
+     *
+     */
+
+    public function checkIfMailExist($email) {
+        if (!$this->db instanceof PDO) {
+            throw new Exception("La connexion à la base de données n'est pas établie.");
+        }
+
+        $query = "SELECT COUNT(*) FROM utilisateur WHERE LOWER(email) = LOWER(:email)";
+
+        try {
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([':email' => trim($email)]);
+            $count = $stmt->fetchColumn();
+            
+            return $count > 0;
+        } catch(PDOException $e) {
+            error_log("Erreur de vérification d'email : " . $e->getMessage());
+            throw new Exception("Erreur lors de la vérification de l'email : " . $e->getMessage());
+        }
+    }
+
     /**
      * Insère un nouvel utilisateur dans la base de données.
      *
@@ -161,6 +190,7 @@ class UserBase {
         throw new Exception("Erreur lors de la confirmation du code de vérification.");
     }
 }
+
 
 }
 

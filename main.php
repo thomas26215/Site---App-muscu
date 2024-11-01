@@ -1,6 +1,7 @@
 <?php
 require_once 'UserBase.php';
 require 'vendor/autoload.php'; // Inclure l'autoloader de Composer pour PHPMailer
+require_once 'Utilitaire/mail.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -51,39 +52,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 $personne->generateAndStoreVerificationCode($email);
 
-                                // Envoi de l'email de confirmation
-                                $mail = new PHPMailer(true);
-                                try {
-                                    // Paramètres du serveur SMTP
-                                    $mail->isSMTP();
-                                    $mail->Host = 'smtp.gmail.com'; // Remplacez par votre serveur SMTP
-                                    $mail->SMTPAuth = true;
-                                    $mail->Username = 'venouilthomas123456@gmail.com'; // Votre adresse email
-                                    $mail->Password = 'oyux ckfj pyqu xfpd'; // Votre mot de passe
-                                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                                    $mail->Port = 587;
+                                sendCodeMail($email, $prenom);
 
-                                    // Destinataires
-                                    $mail->setFrom('venouilthomas123456@gmail.com', 'PlanniSport');
-                                    $mail->addAddress($email, "$prenom"); // Envoyer à l'utilisateur
-
-                                    // Contenu
-                                    $mail->isHTML(true);
-                                    $mail->Subject = 'Bienvenue !';
-                                    $mail->Body = "<h1>Coucou !</h1><p>Tu t'es créé un compte avec succès.</p><br><br>Voici ton code de vérification : " . ($personne->getRecordsByConditions('utilisateur', ['email' => $email])[0]['code_verification'] ?? 'Code non disponible');
-                                    $mail->AltBody = "Coucou ! Tu t'es créé un compte avec succès. Voici ton code de vérification : " . ($personne->getRecordsByConditions('utilisateur', ['email' => $email])[0]['code_verification'] ?? 'Code non disponible');
-
-
-                                    if ($mail->send()) {
-                                        // Redirection vers la page de confirmation après l'envoi de l'email
-                                        header("Location: verifier_code.php");
-                                        exit();
-                                    } else {
-                                        echo 'Le message n\'a pas pu être envoyé. Erreur : ' . $mail->ErrorInfo;
-                                    }
-                                } catch (Exception $e) {
-                                    echo "Le message n'a pas pu être envoyé. Erreur : {$mail->ErrorInfo}";
-                                }
+                                
                             } else {
                                 echo "Erreur lors de l'inscription.";
                             }
@@ -109,9 +80,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         exit();
                     } else {
                         echo "Email ou mot de passe incorrect.";
+
                     }
-                    if($personne->isEmailVerified($email) ==false){
+                    if($personne->isEmailVerified($email) == false && password_verify($password, $user['mot_de_passe'])){
                         echo "Code de vérification non validé";
+                        header("Location: verifier_code.php?error=verification_required");
                     }
                 } catch (Exception $e) {
                     echo "Erreur lors de la connexion.";
