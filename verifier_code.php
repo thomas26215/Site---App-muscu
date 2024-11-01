@@ -19,8 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     
     
     if ($isVerified) {
-        echo "coucou"; // Action si le compte est vérifié
+        
         $base->confirmVerificationCode($_POST['email']);
+        header("Location: main.php");
     } else {
         $errorMessage = "Email ou code de vérification invalide. Réessayez !";
     }
