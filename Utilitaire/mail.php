@@ -1,7 +1,7 @@
 <?php
 
-require 'vendor/autoload.php'; // Inclure l'autoloader de Composer pour PHPMailer
-require_once 'UserBase.php';
+require '../vendor/autoload.php'; // Inclure l'autoloader de Composer pour PHPMailer
+require_once '../BDD/UserBase.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
