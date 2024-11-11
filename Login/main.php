@@ -2,7 +2,7 @@
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-require_once '../BDD/UserBase2.php';
+require_once '../BDD/UserBase.php';
 require '../vendor/autoload.php'; // Inclure l'autoloader de Composer pour PHPMailer
 require_once '../Utilitaire/mail.php';
 
