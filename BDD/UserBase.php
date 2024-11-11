@@ -19,147 +19,156 @@ class UserBase {
         }
     }
 
-    public function getIdWithEmail($email){
-        $results = $this->getColumnWithParameter('utilisateurs', ['email' => $email], ['id']);
-        return !empty($results) ? $results[0]['id'] : null; // Récupérer l'id ou null si aucun résultat
-    }
-
- 
-
-    public function addUser($informations){
-        try{
-            try{
-                $utilisateur = [
-                    'pseudo' => $informations['pseudo'],
-                    'email' => $informations['email'],
-                    'mot_de_passe' => $informations['mot_de_passe']
-                ];
-                $userId = $this->insertUser($utilisateur);
-            }catch(Exception $e){
-                echo 'erreur insertion user';
-            }
-            try{
-                $profil = ['utilisateur_id' => $userId,
-                    'nom' => $informations['nom'],
-                    'prenom' => $informations['prenom'],
-                    'date_naissance' => $informations['date_naissance'],
-                    'sexe' => $informations['genre']
-                ];
-                $this->insertProfil($profil);
-            }catch(Exception $e){
-                echo 'Erreur insertion profil';
-            }
-
-            return !empty($this->getColumnWithParameter('utilisateurs', ['email' => $informations['email']]));
-            
-            
-        }catch(Exception $e){
-            echo "Cet utilisateur a déjà été inséré dans la BDD";
-            return false;
-        }
-
-        
-    }
-
     /**
-     *
-     * Vérifie si le mail existe
-     * 
-     * @param string $email le mail de l'utilisateur
-     * @return bool True si le mail existe dans la base de données
-     *
-     */
+ * Récupère l'identifiant d'un utilisateur à partir de son email.
+ *
+ * @param string $email L'email de l'utilisateur.
+ * @return int|null L'ID de l'utilisateur si trouvé, sinon null.
+ */
+public function getIdWithEmail($email) {
+    $results = $this->getColumnWithParameter('utilisateurs', ['email' => $email], ['id']);
+    return !empty($results) ? $results[0]['id'] : null; // Récupérer l'id ou null si aucun résultat
+}
 
-    public function checkIfMailExist($email) {
-        $result = $this->getColumnWithParameter("utilisateurs", ['email' => $email]);
-        return !empty($result);
+/**
+ * Ajoute un nouvel utilisateur et son profil dans la base de données.
+ *
+ * @param array $informations Les informations de l'utilisateur à ajouter.
+ * @return bool True si l'utilisateur a été ajouté avec succès, sinon false.
+ * @throws Exception Si une erreur survient lors de l'insertion.
+ */
+public function addUser($informations) {
+    try {
+        // Préparation des données utilisateur
+        $utilisateur = [
+            'pseudo' => $informations['pseudo'],
+            'email' => $informations['email'],
+            'mot_de_passe' => $informations['mot_de_passe']
+        ];
+        
+        // Insertion de l'utilisateur
+        $userId = $this->insertUser($utilisateur);
+
+        // Préparation des données du profil
+        $profil = [
+            'utilisateur_id' => $userId,
+            'nom' => $informations['nom'],
+            'prenom' => $informations['prenom'],
+            'date_naissance' => $informations['date_naissance'],
+            'sexe' => $informations['genre']
+        ];
+        
+        // Insertion du profil
+        $this->insertProfil($profil);
+
+        // Vérification de l'insertion réussie
+        return !empty($this->getColumnWithParameter('utilisateurs', ['email' => $informations['email']]));
+        
+    } catch (Exception $e) {
+        echo "Cet utilisateur a déjà été inséré dans la BDD";
+        return false;
     }
+}
 
+/**
+ * Vérifie si un email existe dans la base de données.
+ *
+ * @param string $email L'email à vérifier.
+ * @return bool True si l'email existe, sinon false.
+ */
+public function checkIfMailExist($email) {
+    $result = $this->getColumnWithParameter("utilisateurs", ['email' => $email]);
+    return !empty($result);
+}
+
+/**
+ * Vérifie si le code de vérification correspond à celui stocké pour l'utilisateur.
+ *
+ * @param string $codeVerification Le code de vérification à vérifier.
+ * @param string $email L'email de l'utilisateur.
+ * @return bool True si le code correspond, sinon false.
+ * @throws Exception Si une erreur survient lors de la vérification.
+ */
+public function verifyAccountWithCode($codeVerification, $email) {
+    // Récupération de l'identifiant utilisateur par email
+    $userId = $this->getIdWithEmail($email);
     
+    // Récupération du code de vérification stocké
+    $results = $this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId], ['token']);
+    $code = !empty($results) ? $results[0]['token'] : null;
 
-    /**
-     * Vérifie si le code de vérification de l'utilisateur correspond.
-     *
-     * @param string $codeVerification Le code de vérification à vérifier.
-     * @param string $email L'email de l'utilisateur.
-     * @return bool True si le code correspond, sinon false.
-     * @throws Exception Si une erreur survient lors de la vérification.
-     */
-    public function verifyAccountWithCode($codeVerification, $email) {
+    // Comparaison des codes
+    return $code == $codeVerification;
+}
 
-        
+/**
+ * Génère un code de vérification aléatoire et le stocke dans la base de données pour l'email spécifié.
+ *
+ * @param string $email L'email de l'utilisateur.
+ * @return void
+ * @throws Exception Si une erreur survient lors de la mise à jour de la base de données.
+ */
+public function generateAndStoreVerificationCode($email) {
+    try {
+        // Génération du code aléatoire
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789!@#$%^&*()-_=+[]{};:<.>?';
+        $randomCode = '';
 
-        $userId = $this->getIdWithEmail($email);
-        $results = $this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId], ['token']);
-        $code = !empty($results) ? $results[0]['token'] : null;
-
-        
-
-        echo "code";
-        echo $code;
-        echo "code rentré";
-        echo $codeVerification;
-
-
-        return $code == $codeVerification;
-
-
-        
-    }
-
-    /**
-     * Génère un code de vérification et le stocke dans la base de données pour l'email spécifié.
-     *
-     * @param string $email L'email de l'utilisateur.
-     * @return string Le code de vérification généré.
-     * @throws Exception Si une erreur survient lors de la mise à jour de la base de données.
-     */
-    public function generateAndStoreVerificationCode($email) {
-        try{
-            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789!@#$%^&*()-_=+[]{};:<.>?';
-            $randomCode = '';
-
-            for ($i = 0; $i < 10; $i++) {
-                $randomCode .= $characters[random_int(0, strlen($characters) - 1)];
-            }
-
-            $userId = $this->getIdWithEmail($email); //Récupérer l'id de l'utilisateur
-            
-            
-
-            // Vérifiez si un utilisateur a été trouvé
-            if ($userId !== null) {
-                $this->insertVerificationEmail(['utilisateur_id' => $userId, 'token' => $randomCode]);
-                if(!empty($this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId]))){
-                    $this->deleteVerificationEmail($userId);
-                }
-            } else {
-                echo 'Utilisateur non valide';
-            }
-            
-        }catch(Exception $e){
-            echo 'Impossible dajouter code vérification';
+        for ($i = 0; $i < 10; $i++) {
+            $randomCode .= $characters[random_int(0, strlen($characters) - 1)];
         }
-    }
 
-
-
-    /**
-     * Vérifie si l'email de l'utilisateur est validé (aucun code de vérification stocké).
-     *
-     * @param string $email L'email de l'utilisateur.
-     * @return bool True si l'email est validé (pas de code), sinon false.
-     * @throws Exception Si une erreur survient lors de la vérification.
-     */
-    public function isEmailVerified($email) {
+        // Récupération de l'identifiant utilisateur
         $userId = $this->getIdWithEmail($email);
-        return empty($this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId]));
-    }
 
-    public function confirmVerificationCode($email) {
-        $userId = $this->getIdWithEmail($email);
+        // Vérification si un utilisateur a été trouvé
+        if ($userId !== null) {
+            if (!empty($this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId]))) {
+                // Suppression d'une ancienne vérification si elle existe
+                $this->deleteVerificationEmail($userId);
+            }
+            // Insertion du nouveau code de vérification
+            $this->insertVerificationEmail(['utilisateur_id' => $userId, 'token' => $randomCode]);
+            
+        } else {
+            echo 'Utilisateur non valide';
+        }
+        
+    } catch (Exception $e) {
+        echo 'Impossible d\'ajouter le code de vérification';
+    }
+}
+
+/**
+ * Vérifie si l'email d'un utilisateur est validé (aucun code de vérification stocké).
+ *
+ * @param string $email L'email à vérifier.
+ * @return bool True si l'email est validé (pas de code), sinon false.
+ * @throws Exception Si une erreur survient lors de la vérification.
+ */
+public function isEmailVerified($email) {
+    // Récupération de l'identifiant utilisateur par email
+    $userId = $this->getIdWithEmail($email);
+    
+    // Vérification s'il existe un code de vérification associé à cet utilisateur
+    return empty($this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId]));
+}
+
+/**
+ * Confirme le code de vérification en supprimant le code associé à l'utilisateur.
+ *
+ * @param string $email L'email dont le code doit être confirmé.
+ * @return void
+ */
+public function confirmVerificationCode($email) {
+    // Récupération de l'identifiant utilisateur par email
+    $userId = $this->getIdWithEmail($email);
+    
+    // Suppression du code de vérification associé à cet utilisateur
+    if ($userId !== null) {
         $this->deleteVerificationEmail($userId);
     }
+}
 
 
 /*---------------------------------Requêtes de supression---------------------------------*/
@@ -364,219 +373,177 @@ class UserBase {
 /*---------------------------------Requêtes d'insertions---------------------------------*/
 
     
-    public function insertUser($userData){
-    $query = "INSERT INTO utilisateurs (pseudo, email, mot_de_passe) VALUES(:pseudo, :email, :mot_de_passe)";
-        try{
-            $stmt = $this->db->prepare($query);
-            $success = $stmt->execute($userData);
-            if ($success) {
-                return $this->db->lastInsertId(); // Retourne l'ID du nouvel utilisateur
-            } else {
-                return false;
-            }
-        }catch(PDOException $e){
-            error_log("Erreur d'insertion : " . $e->getMessage());
-            throw new Exception("Erreur lors de l'insertion de l'utilisateur : " . $e->getMessage());
+    /**
+     * Insère un nouvel utilisateur dans la base de données.
+     *
+     * @param array $userData Les données de l'utilisateur à insérer.
+     * @return int|false L'ID du nouvel utilisateur en cas de succès, false en cas d'échec.
+     * @throws Exception Si une erreur se produit lors de l'insertion.
+     */
+    public function insertUser($userData) {
+        $success = $this->insertRelatedData('utilisateurs', $userData);
+        if ($success) {
+            return $this->db->lastInsertId(); // Retourne l'ID du nouvel utilisateur
+        } else {
+            throw new Exception("Erreur lors de l'insertion de l'utilisateur.");
         }
     }
 
-    public function insertProfil($userData){
-        $query = "INSERT INTO profils (utilisateur_id, nom, prenom, date_naissance, sexe) VALUES (:utilisateur_id, :nom, :prenom, :date_naissance, :sexe)";
-        try{
-            $stmt = $this->db->prepare($query);
-            return $stmt->execute($userData);
-        }catch(PDOException $e){
-            error_log("Erreur d'insertion : " . $e->getMessage());
-            throw new Exception("Erreur lors de l'insertion du profil : " . $e->getMessage());
+    /**
+     * Insère un profil dans la base de données.
+     *
+     * @param array $userData Les données du profil à insérer.
+     * @throws Exception Si une erreur se produit lors de l'insertion.
+     */
+    public function insertProfil($userData) {
+        $success = $this->insertRelatedData('profils', $userData);
+        if (!$success) {
+            throw new Exception("Erreur lors de l'insertion du profil.");
         }
     }
 
-    public function insertRole($roleData){
+    /**
+     * Insère un rôle dans la base de données.
+     *
+     * @param array $roleData Les données du rôle à insérer.
+     * @return bool Retourne true si l'insertion réussit, false sinon.
+     * @throws Exception Si le nom du rôle est vide ou si une erreur se produit lors de l'insertion.
+     */
+    public function insertRole($roleData) {
         if (empty($roleData['nom'])) {
-            return false;
+            throw new Exception("Le nom du rôle ne peut pas être vide.");
         }
-
-        $query = "INSERT INTO roles (nom, description) VALUES (:nom, :description)";
-        try {
-            $stmt = $this->db->prepare($query);
-            if ($stmt === false) {
-                throw new Exception("Erreur lors de la préparation de la requête");
-            }
-            $result = $stmt->execute($roleData);
-            if ($result === false) {
-                throw new Exception("Erreur lors de l'exécution de la requête");
-            }
-            return true;
-        } catch(PDOException $e) {
-            // Gestion spécifique pour les doublons
-            if ($e->getCode() == '23000' || $e->getCode() == '1062') { // Codes pour "Duplicate entry"
-                throw new Exception("Erreur lors de l'insertion du rôle : Le rôle existe déjà");
-            }
-            throw new Exception("Erreur lors de l'insertion du rôle : " . $e->getMessage());
+        
+        $success = $this->insertRelatedData('roles', $roleData);
+        if (!$success) {
+            throw new Exception("Erreur lors de l'insertion du rôle.");
         }
+        
+        return true;
     }
 
+    /**
+     * Insère une relation entre un utilisateur et un rôle dans la base de données.
+     *
+     * @param array $roleData Les données de la relation utilisateur-rôle à insérer.
+     * @throws Exception Si les identifiants requis ne sont pas fournis ou si une erreur se produit lors de l'insertion.
+     */
     public function insertUtilisateursRoles($roleData) {
-        // Vérification des paramètres
         if (empty($roleData['utilisateur_id']) || empty($roleData['role_id'])) {
             throw new Exception("L'identifiant de l'utilisateur et le rôle doivent être fournis.");
         }
 
-        // Requête d'insertion
-        $query = "INSERT INTO utilisateurs_roles (utilisateur_id, role_id) VALUES (:utilisateur_id, :role_id)";
-        
-        try {
-            $stmt = $this->db->prepare($query);
-            if ($stmt === false) {
-                throw new Exception("Erreur lors de la préparation de la requête");
-            }
-
-            $result = $stmt->execute([
-                ':utilisateur_id' => $roleData['utilisateur_id'],
-                ':role_id' => $roleData['role_id']
-            ]);
-
-            if ($result === false) {
-                throw new Exception("Erreur lors de l'exécution de la requête");
-            }
-
-            return true; // Retourne vrai si l'insertion a réussi
-
-        } catch (PDOException $e) {
-            // Gestion spécifique pour les doublons
-            if ($e->getCode() == '23000' || $e->getCode() == '1062') { // Codes pour "Duplicate entry"
-                throw new Exception("Erreur lors de l'attribution du rôle à l'utilisateur : Cette relation existe déjà.");
-            }
-            throw new Exception("Erreur lors de l'attribution du rôle à l'utilisateur : " . $e->getMessage());
+        $success = $this->insertRelatedData('utilisateurs_roles', $roleData);
+        if (!$success) {
+            throw new Exception("Erreur lors de l'insertion des utilisateurs et rôles.");
         }
     }
 
+    /**
+     * Insère les préférences d'un utilisateur dans la base de données.
+     *
+     * @param array $preferencesData Les données des préférences à insérer.
+     * @throws Exception Si l'identifiant d'utilisateur n'est pas fourni ou si une erreur se produit lors de l'insertion.
+     */
     public function insertUserPreferences($preferencesData) {
-        // Vérification des paramètres
         if (empty($preferencesData['utilisateur_id'])) {
             throw new Exception("L'identifiant de l'utilisateur doit être fourni.");
         }
 
-        // Requête d'insertion
-        $query = "INSERT INTO preferences (utilisateur_id, theme, notifications_email, langue) VALUES (:utilisateur_id, :theme, :notifications_email, :langue)";
-        
-        try {
-            $stmt = $this->db->prepare($query);
-            if ($stmt === false) {
-                throw new Exception("Erreur lors de la préparation de la requête");
-            }
-
-            $result = $stmt->execute([
-                ':utilisateur_id' => $preferencesData['utilisateur_id'],
-                ':theme' => $preferencesData['theme'] ?? null,
-                ':notifications_email' => $preferencesData['notifications_email'] ?? true,
-                ':langue' => $preferencesData['langue'] ?? null
-            ]);
-
-            return true; // Retourne vrai si l'insertion a réussi
-
-        } catch (PDOException $e) {
-            // Gestion spécifique pour les doublons
-            if ($e->getCode() == '23000') { // Code pour "Duplicate entry"
-                throw new Exception("Erreur lors de l'insertion des préférences : Les préférences existent déjà pour cet utilisateur.");
-            }
-            throw new Exception("Erreur lors de l'insertion des préférences : " . $e->getMessage());
+        $success = $this->insertRelatedData('preferences', $preferencesData);
+        if (!$success) {
+            throw new Exception("Erreur lors de l'insertion des préférences.");
         }
     }
 
+    /**
+     * Insère une session dans la base de données.
+     *
+     * @param array $sessionData Les données de la session à insérer.
+     * @throws Exception Si des informations requises ne sont pas fournies ou si une erreur se produit lors de l'insertion.
+     */
     public function insertSession($sessionData) {
-        // Vérification des paramètres
         if (empty($sessionData['utilisateur_id']) || empty($sessionData['token']) || empty($sessionData['date_expiration'])) {
             throw new Exception("L'identifiant de l'utilisateur, le token et la date d'expiration doivent être fournis.");
         }
 
-        // Requête d'insertion
-        $query = "INSERT INTO sessions (utilisateur_id, token, date_expiration) VALUES (:utilisateur_id, :token, :date_expiration)";
-        
-        try {
-            $stmt = $this->db->prepare($query);
-            if ($stmt === false) {
-                throw new Exception("Erreur lors de la préparation de la requête");
-            }
-
-            $result = $stmt->execute([
-                ':utilisateur_id' => $sessionData['utilisateur_id'],
-                ':token' => $sessionData['token'],
-                ':date_expiration' => $sessionData['date_expiration']
-            ]);
-
-            if ($result === false) {
-                throw new Exception("Erreur lors de l'exécution de la requête");
-            }
-
-            return true; // Retourne vrai si l'insertion a réussi
-
-        } catch (PDOException $e) {
-            // Gestion spécifique pour les doublons
-            if ($e->getCode() == '23000') { // Code pour "Duplicate entry"
-                throw new Exception("Erreur lors de l'insertion de la session : Le token existe déjà.");
-            }
-            throw new Exception("Erreur lors de l'insertion de la session : " . $e->getMessage());
+        $success = $this->insertRelatedData('sessions', $sessionData);
+        if (!$success) {
+            throw new Exception("Erreur lors de l'insertion de la session.");
         }
     }
 
+    /**
+     * Insère une demande de récupération du mot de passe dans la base de données.
+     *
+     * @param array $recuperationData Les données pour la récupération du mot de passe à insérer.
+     * @throws Exception Si des informations requises ne sont pas fournies ou si une erreur se produit lors de l'insertion.
+     */
     public function insertRecuperationMotDePasse($recuperationData) {
-        // Vérification des paramètres
         if (empty($recuperationData['utilisateur_id']) || empty($recuperationData['token']) || empty($recuperationData['date_expiration'])) {
             throw new Exception("L'identifiant de l'utilisateur, le token et la date d'expiration doivent être fournis.");
         }
 
-        // Requête d'insertion
-        $query = "INSERT INTO recuperation_mot_de_passe (utilisateur_id, token, date_expiration) VALUES (:utilisateur_id, :token, :date_expiration)";
-        
-        try {
-            $stmt = $this->db->prepare($query);
-            if ($stmt === false) {
-                throw new Exception("Erreur lors de la préparation de la requête");
-            }
-
-            $result = $stmt->execute([
-                ':utilisateur_id' => $recuperationData['utilisateur_id'],
-                ':token' => $recuperationData['token'],
-                ':date_expiration' => $recuperationData['date_expiration']
-            ]);
-
-            if ($result === false) {
-                throw new Exception("Erreur lors de l'exécution de la requête");
-            }
-
-            return true; // Retourne vrai si l'insertion a réussi
-
-        } catch (PDOException $e) {
-            // Gestion spécifique pour les doublons
-            if ($e->getCode() == '23000') { // Code pour "Duplicate entry"
-                throw new Exception("Erreur lors de l'insertion de la récupération de mot de passe : Le token existe déjà.");
-            }
-            throw new Exception("Erreur lors de l'insertion de la récupération de mot de passe : " . $e->getMessage());
+        $success = $this->insertRelatedData('recuperation_mot_de_passe', $recuperationData);
+        if (!$success) {
+            throw new Exception("Erreur lors de l'insertion pour la récupération du mot de passe.");
         }
     }
 
+    /**
+     * Insère une vérification d'email dans la base de données.
+     *
+     * @param array $verificationData Les données pour la vérification d'email à insérer.
+     * @throws Exception Si des informations requises ne sont pas fournies ou si une erreur se produit lors de l'insertion.
+     */
     public function insertVerificationEmail($verificationData) {
-        // Vérification des paramètres
         if (empty($verificationData['utilisateur_id']) || empty($verificationData['token'])) {
-            throw new Exception("L'identifiant de l'utilisateur, le token et la date d'expiration doivent être fournis.");
+            throw new Exception("L'identifiant de l'utilisateur et le token doivent être fournis.");
         }
 
         // Requête d'insertion
-        $query = "INSERT INTO verifications_email (utilisateur_id, token) VALUES (:utilisateur_id, :token)";
-        
+        $success = $this->insertRelatedData('verifications_email', $verificationData);
+        if (!$success) {
+            throw new Exception("Erreur lors de l'insertion pour la vérification d'email.");
+        }
+    }
+
+    /**
+     * Insère des données liées dans la table spécifiée.
+     *
+     * @param string $table Le nom de la table où les données seront insérées.
+     * @param array $datas Les données à insérer sous forme clé-valeur.
+     * @return bool Retourne true si l'insertion réussit, false sinon.
+     * @throws Exception Si une erreur se produit lors de la préparation ou exécution de la requête SQL.
+     */
+    private function insertRelatedData($table, $datas) {
+        // Construire les colonnes et les placeholders
+        $columns = implode(", ", array_keys($datas));
+        $placeholders = implode(", ", array_map(function ($key) {
+            return ":$key";
+        }, array_keys($datas)));
+
+        return $this->executeInsert("INSERT INTO $table ($columns) VALUES ($placeholders)", $datas);
+    }
+
+    /**
+     * Exécute une requête d'insertion dans la base de données.
+     *
+     * @param string $query La requête SQL d'insertion à exécuter.
+     * @param array $params Les paramètres à associer à la requête SQL.
+     * @return bool Retourne true si l'insertion réussit, false sinon.
+     * @throws Exception Si une erreur se produit lors de la préparation ou exécution de la requête SQL, y compris les doublons.
+     */
+    private function executeInsert($query, $params) {
         try {
+            // Préparation
             $stmt = $this->db->prepare($query);
             if ($stmt === false) {
                 throw new Exception("Erreur lors de la préparation de la requête");
             }
 
-            $result = $stmt->execute([
-                ':utilisateur_id' => $verificationData['utilisateur_id'],
-                ':token' => $verificationData['token']
-            ]);
-
-            if ($result === false) {
+            // Exécution avec liaison des paramètres
+            if (!$stmt->execute($params)) {
                 throw new Exception("Erreur lors de l'exécution de la requête");
             }
 
@@ -585,9 +552,9 @@ class UserBase {
         } catch (PDOException $e) {
             // Gestion spécifique pour les doublons
             if ($e->getCode() == '23000') { // Code pour "Duplicate entry"
-                throw new Exception("Erreur lors de l'insertion de la vérification d'email : Le token existe déjà.");
+                throw new Exception("Erreur : entrée en double détectée.");
             }
-            throw new Exception("Erreur lors de l'insertion de la vérification d'email : " . $e->getMessage());
+            throw new Exception("Erreur lors de l'exécution : " . $e->getMessage());
         }
     }
 
@@ -648,25 +615,6 @@ class UserBase {
         }
     }
 
-
-
-
-
-
-
-        
-
-
-
-
-/*
--- Table roles
-CREATE TABLE roles (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nom VARCHAR(20) NOT NULL UNIQUE,
-    description TEXT
-);
-*/
 
 }
 
