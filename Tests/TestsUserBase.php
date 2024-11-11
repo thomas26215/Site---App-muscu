@@ -862,5 +862,70 @@ class TestsUserBase extends TestCase
          $this->userBase->insertVerificationEmail($verificationDataExecutionFailure);
     }
 
+
+
+
+
+    /**
+     * Teste la suppression réussie des vérifications d'email expirées.
+     */
+    public function testDeleteExpiredVerificationsSuccess() {
+        // Mock pour simuler la suppression des données associées
+        $stmtMockDeleteAssociated = $this->createMock(PDOStatement::class);
+        $stmtMockDeleteAssociated->expects($this->once())
+            ->method('execute')
+            ->willReturn(true);
+
+        // Mock pour simuler la suppression des vérifications d'email expirées
+        $stmtMockDeleteEmail = $this->createMock(PDOStatement::class);
+        $stmtMockDeleteEmail->expects($this->once())
+            ->method('execute')
+            ->willReturn(true);
+
+        // Configuration du mock PDO pour les suppressions
+        $this->dbMock->expects($this->exactly(2))
+            ->method('prepare')
+            ->withConsecutive(
+                [
+                    "DELETE sessions, preferences, profils, utilisateurs_roles FROM sessions JOIN verifications_email ON sessions.utilisateur_id = verifications_email.utilisateur_id JOIN preferences ON sessions.utilisateur_id = preferences.utilisateur_id JOIN profils ON sessions.utilisateur_id = profils.utilisateur_id JOIN utilisateurs_roles ON sessions.utilisateur_id = utilisateurs_roles.utilisateur_id WHERE verifications_email.date_expiration < NOW();"
+                ],
+                [
+                    "DELETE FROM verifications_email WHERE date_expiration < NOW();"
+                ]
+            )
+            ->willReturnOnConsecutiveCalls($stmtMockDeleteAssociated, $stmtMockDeleteEmail);
+
+        // Appel de la méthode à tester
+        $result = $this->userBase->deleteExpiredVerifications();
+
+        // Vérifie que le résultat est le nombre d'enregistrements supprimés (ici 0 car pas de SELECT)
+        $this->assertEquals(0, $result); // Ajustez selon votre logique de retour
+    }
+
+    /**
+     * Teste le comportement lors d'une erreur de suppression des vérifications d'email.
+     */
+    public function testDeleteExpiredVerificationsFailure() {
+        // Simule une exception lors de la suppression des données associées
+        $stmtMockDeleteAssociated = $this->createMock(PDOStatement::class);
+        $stmtMockDeleteAssociated->expects($this->once())
+            ->method('execute')
+            ->willThrowException(new PDOException('Erreur lors de la suppression'));
+
+        // Configuration du mock PDO pour lancer une exception
+        $this->dbMock->expects($this->once())
+            ->method('prepare')
+            ->willReturn($stmtMockDeleteAssociated);
+
+        // Vérifie que l'exception est bien lancée lors de l'appel à deleteExpiredVerifications
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Erreur lors de la suppression des vérifications d'email expirées et des données associées : Erreur lors de la suppression");
+
+        // Appel de la méthode à tester
+        $this->userBase->deleteExpiredVerifications();
+    }
+
+    
+
     
 }

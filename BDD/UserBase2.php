@@ -192,8 +192,181 @@ class UserBase {
 }
 
 
+/*---------------------------------Requêtes de supression---------------------------------*/
 
 
+/**
+ * Supprime un utilisateur et toutes ses données associées.
+ *
+ * @param int $id L'identifiant de l'utilisateur à supprimer.
+ * @return bool Retourne true si la suppression est réussie, false sinon.
+ */
+public function deleteUser($id) {
+    $this->db->beginTransaction();
+    try {
+        $tables = [
+            'verifications_email',
+            'recuperation_mot_de_passe',
+            'sessions',
+            'preferences',
+            'utilisateurs_roles',
+            'profils'
+        ];
+
+        foreach ($tables as $table) {
+            $this->deleteRelatedData($table, $id);
+        }
+
+        $query = "DELETE FROM utilisateurs WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $this->db->commit();
+        return true;
+    } catch (PDOException $e) {
+        $this->db->rollBack();
+        $this->logError("Erreur lors de la suppression de l'utilisateur", $e);
+        return false;
+    }
+}
+
+/**
+ * Supprime le profil d'un utilisateur.
+ *
+ * @param int $userId L'identifiant de l'utilisateur dont le profil doit être supprimé.
+ * @return bool Retourne true si la suppression est réussie, false sinon.
+ */
+public function deleteProfile($userId) {
+    return $this->deleteRelatedData('profils', $userId);
+}
+
+/**
+ * Supprime un rôle.
+ *
+ * @param int $id L'identifiant du rôle à supprimer.
+ * @return bool Retourne true si la suppression est réussie, false sinon.
+ */
+public function deleteRole($id) {
+    return $this->executeDelete("DELETE FROM roles WHERE id = :id", [':id' => $id]);
+}
+
+/**
+ * Supprime une association utilisateur-rôle.
+ *
+ * @param int $userId L'identifiant de l'utilisateur.
+ * @param int $roleId L'identifiant du rôle.
+ * @return bool Retourne true si la suppression est réussie, false sinon.
+ */
+public function deleteUserRole($userId, $roleId) {
+    return $this->executeDelete(
+        "DELETE FROM utilisateurs_roles WHERE utilisateur_id = :userId AND role_id = :roleId",
+        [':userId' => $userId, ':roleId' => $roleId]
+    );
+}
+
+/**
+ * Supprime les préférences d'un utilisateur.
+ *
+ * @param int $userId L'identifiant de l'utilisateur dont les préférences doivent être supprimées.
+ * @return bool Retourne true si la suppression est réussie, false sinon.
+ */
+public function deletePreferences($userId) {
+    return $this->deleteRelatedData('preferences', $userId);
+}
+
+/**
+ * Supprime les vérifications d'email expirées et les données associées.
+ *
+ * @return int Le nombre d'enregistrements supprimés.
+ * @throws Exception Si une erreur survient pendant la suppression.
+ */
+public function deleteExpiredVerifications() {
+    $this->db->beginTransaction();
+    try {
+        $tables = ['sessions', 'preferences', 'profils', 'utilisateurs_roles'];
+        foreach ($tables as $table) {
+            $this->deleteExpiredRelatedData($table);
+        }
+
+        $deletedCount = $this->deleteExpiredEmailVerifications();
+
+        $this->db->commit();
+        return $deletedCount;
+    } catch (PDOException $e) {
+        $this->db->rollBack();
+        throw new Exception("Erreur lors de la suppression des vérifications d'email expirées et des données associées : " . $e->getMessage());
+    }
+}
+
+/**
+ * Supprime les données liées à un utilisateur dans une table spécifique.
+ *
+ * @param string $table Le nom de la table.
+ * @param int $userId L'identifiant de l'utilisateur.
+ * @return bool Retourne true si la suppression est réussie, false sinon.
+ */
+private function deleteRelatedData($table, $userId) {
+    return $this->executeDelete("DELETE FROM $table WHERE utilisateur_id = :userId", [':userId' => $userId]);
+}
+
+/**
+ * Exécute une requête de suppression.
+ *
+ * @param string $query La requête SQL de suppression.
+ * @param array $params Les paramètres de la requête.
+ * @return bool Retourne true si la suppression est réussie, false sinon.
+ */
+private function executeDelete($query, $params) {
+    $this->db->beginTransaction();
+    try {
+        $stmt = $this->db->prepare($query);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        $this->db->commit();
+        return true;
+    } catch (PDOException $e) {
+        $this->db->rollBack();
+        $this->logError("Erreur lors de l'exécution de la requête de suppression", $e);
+        return false;
+    }
+}
+
+/**
+ * Supprime les données expirées liées aux vérifications d'email dans une table spécifique.
+ *
+ * @param string $table Le nom de la table.
+ */
+private function deleteExpiredRelatedData($table) {
+    $query = "DELETE $table FROM $table
+              JOIN verifications_email ON $table.utilisateur_id = verifications_email.utilisateur_id
+              WHERE verifications_email.date_expiration < NOW()";
+    $this->db->prepare($query)->execute();
+}
+
+/**
+ * Supprime les vérifications d'email expirées.
+ *
+ * @return int Le nombre de vérifications supprimées.
+ */
+private function deleteExpiredEmailVerifications() {
+    $query = "DELETE FROM verifications_email WHERE date_expiration < NOW()";
+    $stmt = $this->db->prepare($query);
+    $stmt->execute();
+    return $stmt->rowCount();
+}
+
+/**
+ * Enregistre une erreur dans les logs.
+ *
+ * @param string $message Le message d'erreur.
+ * @param Exception $e L'exception capturée.
+ */
+private function logError($message, Exception $e) {
+    error_log($message . ": " . $e->getMessage());
+}
 
 
 /*---------------------------------Requêtes d'insertions---------------------------------*/
