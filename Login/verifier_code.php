@@ -1,4 +1,4 @@
-<?php
+<?php   
 require_once '../BDD/UserBase.php';
 $base = new UserBase();
 
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     <div class="container" id="container">
         <div class="form-container reset-password-container">
             <form action="#" method="POST">
-                <h1 style="padding-top: 60px;">Code de vérification envoyé</h1>
+                <h1 style="padding-top: 30px;">Code de vérification envoyé</h1>
 
                 <!-- Message conditionnel -->
                 <?php
@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
                     <input type="text" placeholder="Code" name="code" required />
                     <label></label>
                 </div>
-                <a href="ask_new_code.php" class="forgot" type="askNewCode" value="askNewCode" style="margin-top: 0;margin-left: -50px;">Demander un nouveau code de connexion</a>
+                <a href="ask_new_code.php" class="forgot" type="askNewCode" value="askNewCode" style="margin-top: 0;margin-left: -20px;">Demander un nouveau code de connexion</a>
                 <button type="submit" name="submit">Envoyer le lien</button>
                 <a href="main.php" class="forgot">Retour à la connexion</a>
                 

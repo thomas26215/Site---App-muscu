@@ -35,9 +35,16 @@ function sendMail($subject, $body, $AltBody, $email, $prenom){
 
 function sendCodeMail($email, $prenom){
     // Obtenez le code de vérification de la base de données
+
     $base = new UserBase();
+    $codeVerification = $base->getColumnWithParameter('verifications_email', ['utilisateur_id' => $base->getIdWithEmail($email)], ['token'])[0]['token'];
+
+
+
+
+    /*$base = new UserBase();
     $userRecord = $base->getRecordsByConditions('utilisateur', ['email' => $email]);
-    $codeVerification = $userRecord[0]['code_verification'] ?? 'Code non disponible';
+    $codeVerification = $userRecord[0]['code_verification'] ?? 'Code non disponible';*/
 
     // Préparation du contenu de l'email
     $subject = "Bienvenue";

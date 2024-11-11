@@ -2,11 +2,10 @@
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-require_once '../BDD/UserBase.php';
+require_once '../BDD/UserBase2.php';
 require '../vendor/autoload.php'; // Inclure l'autoloader de Composer pour PHPMailer
 require_once '../Utilitaire/mail.php';
 
-use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 $personne = new UserBase();
@@ -16,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Filtrer les données et empêcher les failles XSS
         $nom = htmlspecialchars($_POST['nom'] ?? '');
         $prenom = htmlspecialchars($_POST['prenom'] ?? '');
-        $age = filter_var($_POST['age'] ?? '', FILTER_VALIDATE_INT, ["options" => ["min_range" => 1, "max_range" => 120]]);
+        $pseudo = htmlspecialchars($_POST['pseudo'] ?? '');
         $genre = htmlspecialchars($_POST['genre'] ?? '');
         $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL);
         $password = $_POST['password'] ?? '';
@@ -26,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($_POST['submit'] == "sign up") {
             // Validation des données du formulaire
-            if ($nom && $prenom && $age && $genre && $email && $password && $confirmPassword && $dateNaissance) {
+            if ($nom && $prenom && $pseudo && $genre && $email && $password && $confirmPassword && $dateNaissance) {
                 if ($password !== $confirmPassword) {
                     echo "Les mots de passe ne correspondent pas.";
                 } else {
@@ -37,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $userData = [
                         'nom' => $nom,
                         'prenom' => $prenom,
-                        'age' => $age,
+                        'pseudo' => $pseudo,
                         'genre' => $genre,
                         'email' => $email,
                         'mot_de_passe' => $hashedPassword,
@@ -50,20 +49,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo "L'email est déjà utilisé.";
                         } else {
                             // Tentative d'insertion de l'utilisateur
-                            if ($personne->insertUser($userData)) {
+                            if ($personne->addUser($userData)) {
                                 echo "Inscription réussie !";
 
                                 $personne->generateAndStoreVerificationCode($email);
 
                                 sendCodeMail($email, $prenom);
 
+                                header("Location: verifier_code.php");
+
                                 
                             } else {
-                                echo "Erreur lors de l'inscription.";
+                                echo "Erreur lors de l'inscription. 1";
                             }
                         }
                     } catch (Exception $e) {
-                        echo "Erreur lors de l'inscription.";
+                        echo "Erreur lors de l'inscription. 2";
                     }
                 }
             } else {
@@ -128,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type="text" placeholder="Prénom" name="prenom" required/>
                     </div>
                     <div class="infield">
-                        <input type="number" placeholder="Âge" name="age" min="1" max="120" required/>
+                        <input type="text" placeholder="Pseudo" name="pseudo" required/>
                     </div>
                     <button type="button" onclick="nextStep(1)">Suivant</button>
                 </div>
