@@ -1,18 +1,18 @@
 <?php
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 require_once '../BDD/UserBase.php';
-require '../vendor/autoload.php'; // Inclure l'autoloader de Composer pour PHPMailer
+require '../vendor/autoload.php';
 require_once '../Utilitaire/mail.php';
 
 use PHPMailer\PHPMailer\Exception;
 
 $personne = new UserBase();
+$emailUsed = false;
+$erreurPassword = false;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['submit'])) {
-        // Filtrer les données et empêcher les failles XSS
         $nom = htmlspecialchars($_POST['nom'] ?? '');
         $prenom = htmlspecialchars($_POST['prenom'] ?? '');
         $pseudo = htmlspecialchars($_POST['pseudo'] ?? '');
@@ -22,17 +22,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $confirmPassword = $_POST['confirmPassword'] ?? '';
         $dateNaissance = htmlspecialchars($_POST['dateNaissance'] ?? '');
 
-
         if ($_POST['submit'] == "sign up") {
-            // Validation des données du formulaire
             if ($nom && $prenom && $pseudo && $genre && $email && $password && $confirmPassword && $dateNaissance) {
                 if ($password !== $confirmPassword) {
                     echo "Les mots de passe ne correspondent pas.";
                 } else {
-                    // Hachage du mot de passe
                     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-                    // Préparation des données pour l'insertion
                     $userData = [
                         'nom' => $nom,
                         'prenom' => $prenom,
@@ -44,21 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ];
 
                     try {
-                        // Vérification que l'email n'existe pas déjà
                         if ($personne->getUserByEmail($email)) {
                             echo "L'email est déjà utilisé.";
+                            $emailUsed = true;
                         } else {
-                            // Tentative d'insertion de l'utilisateur
                             if ($personne->addUser($userData)) {
                                 echo "Inscription réussie !";
-
                                 $personne->generateAndStoreVerificationCode($email);
-
                                 sendCodeMail($email, $prenom);
-
                                 header("Location: verifier_code.php");
-
-                                
                             } else {
                                 echo "Erreur lors de l'inscription. 1";
                             }
@@ -73,10 +62,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($_POST['submit'] == "sign in") {
             if ($email && $password) {
                 try {
-                    // Récupération de l'utilisateur par email
                     $user = $personne->getUserByEmail($email);
-
                     if ($user && password_verify($password, $user['mot_de_passe']) && $personne->isEmailVerified($email) == true) {
+                        $erreurPassword = false;
                         session_start();
                         $_SESSION['user_id'] = $user['id'];
                         echo "Connexion réussie !";
@@ -84,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         exit();
                     } else {
                         echo "Email ou mot de passe incorrect.";
-
+                        $erreurPassword = true;
                     }
                     if($personne->isEmailVerified($email) == false && password_verify($password, $user['mot_de_passe'])){
                         echo "Code de vérification non validé";
@@ -173,11 +161,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <span>Ou utiliser votre email pour vous connecter</span>
                 <div class="infield">
-                    <input type="email" placeholder="Email" name="email"/>
+                    <?php if ($emailUsed || $erreurPassword){ 
+                        echo '<input type="email" placeholder="Email" name="email" value="'.$_POST['email'].'" style="border: 3px red solid; border-radius: 5px; color: red; font-weight: bold;"/>';
+                    }else{
+                        echo '<input type="email" placeholder="Email" name="email"/>';
+                    } ?>
                 </div>
+                <?php if($emailUsed){
+                    echo '<p style="margin: 0px; color: brown; font-weight: bold;">Cette adresse email est déjà utilisée ! Essayer de vous connecter avec celle-ci</p>';
+                }
+                
+                ?>
                 <div class="infield">
-                    <input type="password" placeholder="Mot de passe" name="password"/>
+                    <?php if ($erreurPassword){ 
+                        echo '<input type="password" placeholder="Mot de passe" name="password" style="border: 3px red solid; border-radius: 5px;"/>';
+                    }else{
+                        echo '<input type="password" placeholder="Mot de passe" name="password"/>';
+                    } ?>
+                    
                 </div>
+                <?php if($erreurPassword){
+                    echo '<p style="margin: 0px; color: red; font-weight: bold;">Email ou MDP incorrect</p>';
+                }?>
                 <a href="forget_password.php" class="forgot">Mot de passe oublié ?</a>
                 <button type="submit" name="submit" value="sign in">Se connecter</button>
             </form>
