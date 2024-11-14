@@ -22,10 +22,12 @@ Ce projet vise à développer la version web d'une application mobile de suivi d
 
 ## Fonctionnalités
 Les utilisateurs peuvent :
-- **Créer des programmes de musculation** : Concevoir et personnaliser leurs propres programmes d'entraînement avec différents types d'exercices
+- **Créer des programmes de musculation** : Concevoir et personnaliser leurs propres programmes d'entraînement avec différents types d'exercices.
 - **Pratiquer plusieurs types de sport** : Inclure des activités telles que la musculation et les sports de combat.
 - **Choisir le type d'exercice** : Sélectionner des paramètres spécifiques comme le poids, le temps, les exercices dégressifs, ou alternés (ex. : 1 min de squats suivi de 1 min de gainage, répété 3 fois sans pause).
 - **Accéder à un système d'apprentissage** : Intégrer des cours sur des sujets comme le MMA, incluant des explications détaillées et une liste d'exercices pratiques.
+- **Suivre ses progrès** : Accéder à un système de suivi basé sur des statistiques, permettant aux utilisateurs d'évaluer leur performance au fil du temps. En fonction des performances réalisées précédemment, l'algorithme pourra conseiller d'augmenter ou de réduire les charges/temps sur certains exercices.
+- **Gestion du matériel** : Au début de chaque séance, l'application demandera à l'utilisateur s'il dispose de tout le matériel nécessaire. Si ce n'est pas le cas, elle proposera automatiquement une alternative avec les équipements dont l'utilisateur dispose.
 
 ## Installation
 Pour installer le projet localement, suivez ces étapes :
