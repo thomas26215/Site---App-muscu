@@ -20,155 +20,155 @@ class UserBase {
     }
 
     /**
- * Récupère l'identifiant d'un utilisateur à partir de son email.
- *
- * @param string $email L'email de l'utilisateur.
- * @return int|null L'ID de l'utilisateur si trouvé, sinon null.
- */
-public function getIdWithEmail($email) {
-    $results = $this->getColumnWithParameter('utilisateurs', ['email' => $email], ['id']);
-    return !empty($results) ? $results[0]['id'] : null; // Récupérer l'id ou null si aucun résultat
-}
-
-/**
- * Ajoute un nouvel utilisateur et son profil dans la base de données.
- *
- * @param array $informations Les informations de l'utilisateur à ajouter.
- * @return bool True si l'utilisateur a été ajouté avec succès, sinon false.
- * @throws Exception Si une erreur survient lors de l'insertion.
- */
-public function addUser($informations) {
-    try {
-        // Préparation des données utilisateur
-        $utilisateur = [
-            'pseudo' => $informations['pseudo'],
-            'email' => $informations['email'],
-            'mot_de_passe' => $informations['mot_de_passe']
-        ];
-        
-        // Insertion de l'utilisateur
-        $userId = $this->insertUser($utilisateur);
-
-        // Préparation des données du profil
-        $profil = [
-            'utilisateur_id' => $userId,
-            'nom' => $informations['nom'],
-            'prenom' => $informations['prenom'],
-            'date_naissance' => $informations['date_naissance'],
-            'sexe' => $informations['genre']
-        ];
-        
-        // Insertion du profil
-        $this->insertProfil($profil);
-
-        // Vérification de l'insertion réussie
-        return !empty($this->getColumnWithParameter('utilisateurs', ['email' => $informations['email']]));
-        
-    } catch (Exception $e) {
-        echo "Cet utilisateur a déjà été inséré dans la BDD";
-        return false;
+     * Récupère l'identifiant d'un utilisateur à partir de son email.
+     *
+     * @param string $email L'email de l'utilisateur.
+     * @return int|null L'ID de l'utilisateur si trouvé, sinon null.
+     */
+    public function getIdWithEmail($email) {
+        $results = $this->getColumnWithParameter('utilisateurs', ['email' => $email], ['id']);
+        return !empty($results) ? $results[0]['id'] : null; // Récupérer l'id ou null si aucun résultat
     }
-}
 
-/**
- * Vérifie si un email existe dans la base de données.
- *
- * @param string $email L'email à vérifier.
- * @return bool True si l'email existe, sinon false.
- */
-public function checkIfMailExist($email) {
-    $result = $this->getColumnWithParameter("utilisateurs", ['email' => $email]);
-    return !empty($result);
-}
-
-/**
- * Vérifie si le code de vérification correspond à celui stocké pour l'utilisateur.
- *
- * @param string $codeVerification Le code de vérification à vérifier.
- * @param string $email L'email de l'utilisateur.
- * @return bool True si le code correspond, sinon false.
- * @throws Exception Si une erreur survient lors de la vérification.
- */
-public function verifyAccountWithCode($codeVerification, $email) {
-    // Récupération de l'identifiant utilisateur par email
-    $userId = $this->getIdWithEmail($email);
-    
-    // Récupération du code de vérification stocké
-    $results = $this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId], ['token']);
-    $code = !empty($results) ? $results[0]['token'] : null;
-
-    // Comparaison des codes
-    return $code == $codeVerification;
-}
-
-/**
- * Génère un code de vérification aléatoire et le stocke dans la base de données pour l'email spécifié.
- *
- * @param string $email L'email de l'utilisateur.
- * @return void
- * @throws Exception Si une erreur survient lors de la mise à jour de la base de données.
- */
-public function generateAndStoreVerificationCode($email) {
-    try {
-        // Génération du code aléatoire
-        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789!@#$%^&*()-_=+[]{};:<.>?';
-        $randomCode = '';
-
-        for ($i = 0; $i < 10; $i++) {
-            $randomCode .= $characters[random_int(0, strlen($characters) - 1)];
-        }
-
-        // Récupération de l'identifiant utilisateur
-        $userId = $this->getIdWithEmail($email);
-
-        // Vérification si un utilisateur a été trouvé
-        if ($userId !== null) {
-            if (!empty($this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId]))) {
-                // Suppression d'une ancienne vérification si elle existe
-                $this->deleteVerificationEmail($userId);
-            }
-            // Insertion du nouveau code de vérification
-            $this->insertVerificationEmail(['utilisateur_id' => $userId, 'token' => $randomCode]);
+    /**
+     * Ajoute un nouvel utilisateur et son profil dans la base de données.
+     *
+     * @param array $informations Les informations de l'utilisateur à ajouter.
+     * @return bool True si l'utilisateur a été ajouté avec succès, sinon false.
+     * @throws Exception Si une erreur survient lors de l'insertion.
+     */
+    public function addUser($informations) {
+        try {
+            // Préparation des données utilisateur
+            $utilisateur = [
+                'pseudo' => $informations['pseudo'],
+                'email' => $informations['email'],
+                'mot_de_passe' => $informations['mot_de_passe']
+            ];
             
-        } else {
-            echo 'Utilisateur non valide';
+            // Insertion de l'utilisateur
+            $userId = $this->insertUser($utilisateur);
+
+            // Préparation des données du profil
+            $profil = [
+                'utilisateur_id' => $userId,
+                'nom' => $informations['nom'],
+                'prenom' => $informations['prenom'],
+                'date_naissance' => $informations['date_naissance'],
+                'sexe' => $informations['genre']
+            ];
+            
+            // Insertion du profil
+            $this->insertProfil($profil);
+
+            // Vérification de l'insertion réussie
+            return !empty($this->getColumnWithParameter('utilisateurs', ['email' => $informations['email']]));
+            
+        } catch (Exception $e) {
+            echo "Cet utilisateur a déjà été inséré dans la BDD";
+            return false;
         }
+    }
+
+    /**
+     * Vérifie si un email existe dans la base de données.
+     *
+     * @param string $email L'email à vérifier.
+     * @return bool True si l'email existe, sinon false.
+     */
+    public function checkIfMailExist($email) {
+        $result = $this->getColumnWithParameter("utilisateurs", ['email' => $email]);
+        return !empty($result);
+    }
+
+    /**
+     * Vérifie si le code de vérification correspond à celui stocké pour l'utilisateur.
+     *
+     * @param string $codeVerification Le code de vérification à vérifier.
+     * @param string $email L'email de l'utilisateur.
+     * @return bool True si le code correspond, sinon false.
+     * @throws Exception Si une erreur survient lors de la vérification.
+     */
+    public function verifyAccountWithCode($codeVerification, $email) {
+        // Récupération de l'identifiant utilisateur par email
+        $userId = $this->getIdWithEmail($email);
         
-    } catch (Exception $e) {
-        echo 'Impossible d\'ajouter le code de vérification';
-    }
-}
+        // Récupération du code de vérification stocké
+        $results = $this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId], ['token']);
+        $code = !empty($results) ? $results[0]['token'] : null;
 
-/**
- * Vérifie si l'email d'un utilisateur est validé (aucun code de vérification stocké).
- *
- * @param string $email L'email à vérifier.
- * @return bool True si l'email est validé (pas de code), sinon false.
- * @throws Exception Si une erreur survient lors de la vérification.
- */
-public function isEmailVerified($email) {
-    // Récupération de l'identifiant utilisateur par email
-    $userId = $this->getIdWithEmail($email);
-    
-    // Vérification s'il existe un code de vérification associé à cet utilisateur
-    return empty($this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId]));
-}
-
-/**
- * Confirme le code de vérification en supprimant le code associé à l'utilisateur.
- *
- * @param string $email L'email dont le code doit être confirmé.
- * @return void
- */
-public function confirmVerificationCode($email) {
-    // Récupération de l'identifiant utilisateur par email
-    $userId = $this->getIdWithEmail($email);
-    
-    // Suppression du code de vérification associé à cet utilisateur
-    if ($userId !== null) {
-        $this->deleteVerificationEmail($userId);
+        // Comparaison des codes
+        return $code == $codeVerification;
     }
-}
+
+    /**
+     * Génère un code de vérification aléatoire et le stocke dans la base de données pour l'email spécifié.
+     *
+     * @param string $email L'email de l'utilisateur.
+     * @return void
+     * @throws Exception Si une erreur survient lors de la mise à jour de la base de données.
+     */
+    public function generateAndStoreVerificationCode($email) {
+        try {
+            // Génération du code aléatoire
+            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789!@#$%^&*()-_=+[]{};:<.>?';
+            $randomCode = '';
+
+            for ($i = 0; $i < 10; $i++) {
+                $randomCode .= $characters[random_int(0, strlen($characters) - 1)];
+            }
+
+            // Récupération de l'identifiant utilisateur
+            $userId = $this->getIdWithEmail($email);
+
+            // Vérification si un utilisateur a été trouvé
+            if ($userId !== null) {
+                if (!empty($this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId]))) {
+                    // Suppression d'une ancienne vérification si elle existe
+                    $this->deleteVerificationEmail($userId);
+                }
+                // Insertion du nouveau code de vérification
+                $this->insertVerificationEmail(['utilisateur_id' => $userId, 'token' => $randomCode]);
+                
+            } else {
+                echo 'Utilisateur non valide';
+            }
+            
+        } catch (Exception $e) {
+            echo 'Impossible d\'ajouter le code de vérification';
+        }
+    }
+
+    /**
+     * Vérifie si l'email d'un utilisateur est validé (aucun code de vérification stocké).
+     *
+     * @param string $email L'email à vérifier.
+     * @return bool True si l'email est validé (pas de code), sinon false.
+     * @throws Exception Si une erreur survient lors de la vérification.
+     */
+    public function isEmailVerified($email) {
+        // Récupération de l'identifiant utilisateur par email
+        $userId = $this->getIdWithEmail($email);
+        
+        // Vérification s'il existe un code de vérification associé à cet utilisateur
+        return empty($this->getColumnWithParameter('verifications_email', ['utilisateur_id' => $userId]));
+    }
+
+    /**
+     * Confirme le code de vérification en supprimant le code associé à l'utilisateur.
+     *
+     * @param string $email L'email dont le code doit être confirmé.
+     * @return void
+     */
+    public function confirmVerificationCode($email) {
+        // Récupération de l'identifiant utilisateur par email
+        $userId = $this->getIdWithEmail($email);
+        
+        // Suppression du code de vérification associé à cet utilisateur
+        if ($userId !== null) {
+            $this->deleteVerificationEmail($userId);
+        }
+    }
 
 
 /*---------------------------------Requêtes de supression---------------------------------*/
