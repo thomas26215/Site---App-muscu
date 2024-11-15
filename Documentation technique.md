@@ -34,8 +34,6 @@ Description à fournir
 
 #### 3.1.1. **Fichier `utilisateur.db**
 
-Voici la version mise à jour selon vos instructions :
-
 - **TABLE `utilisateurs`** :
     - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'utilisateur.
     - `pseudo` **VARCHAR(50) NOT NULL** : Le pseudo de la personne.
@@ -144,29 +142,62 @@ Voici la version mise à jour selon vos instructions :
 #### **3.1.3** Fichier seances.db
 
 
-- **TABLE `seance`** :
-    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de la séance.
-    - `id_utilisateur` **INTEGER NOT NULL** : Identifiant de l'utilisateur associé à la séance.
-    - `description` **TEXT** : Description de la séance.
-
-- **TABLE `equipment`** :
-    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'équipement.
-    - `name` **VARCHAR(255) NOT NULL UNIQUE** : Nom de l'équipement.
-    - `description` **TEXT** : Description de l'équipement.
-
-- **TABLE `exercise_types`** :
-    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique du type d'exercice.
-    - `type_name` **VARCHAR(255) NOT NULL UNIQUE** : Nom du type d'exercice.
-
-- **TABLE `exercises`** :
+- **Table `seance`**
+	- `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de la séance.
+	- `id_utilisateur` **INTEGER NOT NULL** : Identifiant de l'utilisateur qui a créé la séance.
+	- `nom` **VARCHAR(255) NOT NULL** : Nom de la séance.
+	- `description` **TEXT** : Description détaillée de la séance.
+	- `date_creation` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de création de la séance.
+- **Table `seance_groupes`**
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique du groupe.
+    - `id_seance` **INTEGER NOT NULL** : Identifiant de la séance associée.
+    - `nombre_repetitions` **INTEGER NOT NULL** : Nombre de fois que ce groupe d'exercices sera répété.
+    - `ordre` **INTEGER NOT NULL** : Ordre d'apparition du groupe dans la séance.
+- **Table `seance_exercices`**
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'association exercice-groupe.
+    - `id_groupe` **INTEGER NOT NULL** : Identifiant du groupe auquel l'exercice appartient.
+    - `id_exercice` **INTEGER NOT NULL** : Identifiant de l'exercice.
+    - `ordre_exercice` **INTEGER NOT NULL** : Ordre de l'exercice dans le groupe.
+- **Table `exercises`**
     - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'exercice.
     - `id_utilisateur` **INTEGER NOT NULL** : Identifiant de l'utilisateur qui a créé l'exercice.
     - `name` **VARCHAR(255) NOT NULL** : Nom de l'exercice.
     - `description` **VARCHAR(1000) NOT NULL** : Description détaillée de l'exercice.
     - `type` **VARCHAR(50) NOT NULL** : Type d'exercice (musculation, cardio, etc.).
-    - `equipment_id` **INTEGER** : Identifiant de l'équipement nécessaire.
-    - `combat_sport` **VARCHAR(50)** : Sport de combat si applicable.
     - `created_at` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de création de l'exercice.
+- **Table `exercices_repetition`**
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'enregistrement.
+    - `id_exercice` **INTEGER NOT NULL** : Identifiant de l'exercice associé.
+    - `series` **INTEGER NOT NULL** : Nombre de séries pour cet exercice.
+    - `repetitions` **INTEGER NOT NULL** : Nombre de répétitions par série.
+    - `temps_repos_entre_series` **INTEGER** : Temps de repos entre les séries (en secondes).
+- **Table `exercices_temps`**
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'enregistrement.
+    - `id_exercice` **INTEGER NOT NULL** : Identifiant de l'exercice associé.
+    - `series` **INTEGER NOT NULL** : Nombre de séries pour cet exercice.
+    - `duree` **INTEGER NOT NULL** : Durée d'une série (en secondes).
+    - `temps_repos_entre_series` **INTEGER** : Temps de repos entre les séries (en secondes).
+- **Table `exercices_degression`**
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'enregistrement.
+    - `id_exercice` **INTEGER NOT NULL** : Identifiant de l'exercice associé.
+    - `temps_repos_entre_series` **INTEGER** : Temps de repos entre les séries (en secondes).
+- **Table `details_degression`**
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique des détails de dégression.
+    - `id_exercice_degression` **INTEGER NOT NULL** : Identifiant de l'exercice avec dégressions associé.
+    - `numero_serie` **INTEGER NOT NULL** : Numéro séquentiel pour la série (1, 2, etc.).
+    - `poids` **DECIMAL(5,2) NOT NULL:** Poids utilisé pour cette série (ex: '15.00' pour '15kg').
+- **Table `exercices_alternes`**
+   - `id` ***INTEGER PRIMARY KEY AUTOINCREMENT***: Identifiant unique pour la séquence alternée
+   - `nom` ***VARCHAR(255) NOT NULL***: Nom pour identifier cette séquence alternée
+   - `nombre_series` ***INTEGER NOT NULL***: Nombre total de séries dans cette séquence
+   - `temps_repos_entre_series` ***INTEGER***: Temps de repos entre les séries (en secondes)
+- **Table `details_exercices_alternes`**
+   - `id` **INTEGER PRIMARY KEY AUTOINCREMENT**: Identifiant unique pour cet enregistrement
+   - `id_exercice_alterne` **INTEGER NOT NULL**: Identifiant du circuit alterné auquel cet exercice appartient
+   - `ordre_serie` **INTEGER NOT NULL**: Ordre dans lequel cet exercice apparaît dans le circuit alterné
+   - `id_exercice` **INTEGER NOT NULL**: Identifiant du véritable exercice
+   - `repetitions` **INTEGER NOT NULL**: Nombre total de répétitions pour cet exercice dans cette série
+
 
 ### **3.2.** Relations entre les Tables
 
@@ -214,7 +245,41 @@ Voici la version mise à jour selon vos instructions :
     - Pertinence : Permet aux utilisateurs de planifier et d'organiser leurs entraînements.
 15. Relation one-to-many entre `equipment` et `exercises` via `equipment_id`:
     - Un équipement peut être utilisé dans plusieurs exercices.
-    - Pertinence : Facilite la recherche d'exercices basés sur l'équipement disponible pour l'utilisateur. 
+    - Pertinence : Facilite la recherche d'exercices basés sur l'équipement disponible pour l'utilisateur.
+16. Relation one-to-many entre `utilisateurs` et `seance` via `id_utilisateur` :  
+    - Un utilisateur peut créer plusieurs séances.  
+    - Pertinence : Permet de gérer les séances associées à chaque utilisateur tout en maintenant un lien direct avec le créateur de la séance.
+17. Relation one-to-many entre `seance` et `seance_groupes` via `id_seance` :  
+    - Une séance peut contenir plusieurs groupes d'exercices.  
+    - Pertinence : Structure les groupes d'exercices comme des sous-composantes d'une séance, permettant une organisation claire et une gestion flexible.
+18. Relation one-to-many entre `seance_groupes` et `seance_exercices` via `id_groupe` :  
+    - Un groupe peut inclure plusieurs exercices.  
+    - Pertinence : Permet de lier des exercices à des groupes spécifiques tout en respectant leur ordre dans la structure de la séance.
+19. Relation one-to-many entre `exercises` et `seance_exercices` via `id_exercice` :  
+    - Un exercice peut être utilisé dans plusieurs groupes ou séances.  
+    - Pertinence : Assure que chaque exercice inclus dans une séance est validé et correctement référencé.
+20. Relation one-to-one entre `exercises` et `exercices_repetition` via `id_exercice` :  
+    - Chaque exercice peut avoir des détails spécifiques pour les répétitions (séries, nombre de répétitions, temps de repos).  
+    - Pertinence : Gère les paramètres détaillés pour les exercices basés sur des répétitions.
+21. Relation one-to-one entre `exercises` et `exercices_temps` via `id_exercice` :  
+    - Chaque exercice peut avoir des détails spécifiques pour les séances basées sur le temps (durée, séries, temps de repos).  
+    - Pertinence : Supporte les exercices où la durée est le facteur principal.
+22. Relation one-to-one entre `exercises` et `exercices_degression` via `id_exercice` :  
+    - Chaque exercice peut inclure une dégression (repos progressif, poids décroissant, etc.).  
+    - Pertinence : Permet de gérer les exercices avec une approche évolutive ou dégressive.
+23. Relation one-to-many entre `exercices_degression` et `details_degression` via `id_exercice_degression` :  
+    - Une dégression peut avoir plusieurs détails par série (numéro de série, poids utilisé, etc.).  
+    - Pertinence : Offre un suivi précis des paramètres pour chaque série d'une dégression.
+24. Relation one-to-many entre `exercices_alternes` et `details_exercices_alternes` via `id_exercice_alterne` :  
+    - Une séquence alternée peut inclure plusieurs séries d'exercices.  
+    - Pertinence : Structure et organise les exercices alternés dans un format répétable et clair.
+25. Relation one-to-many entre `exercises` et `details_exercices_alternes` via `id_exercice` :  
+    - Un exercice peut être inclus dans plusieurs séquences alternées.  
+    - Pertinence : Permet de réutiliser les exercices existants dans des séquences variées, garantissant leur cohérence dans les différents types d'entraînement.  
+
+---
+
+Si vous avez d'autres ajustements ou points spécifiques, je suis à votre disposition. 😊
 
 ### **3.3.** Cas d'utilisations des tables
 
