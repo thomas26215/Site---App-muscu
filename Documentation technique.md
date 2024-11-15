@@ -218,7 +218,10 @@ Voici la version mise à jour selon vos instructions :
 
 ## Fonctionnalités
 
-### ***4.1*** Page Connexion 
+### **4.1** Page Login
+
+#### **4.1.1.** Connexion Compte
+
 - **Fonctionnalité** : permet aux utilisateurs se connecter à leur compte existant
 - **Interface utilisateur** :
    - Champs de saisie pour l'adresse e-mail de l'utilisateur
@@ -243,10 +246,19 @@ Voici la version mise à jour selon vos instructions :
       - **Dans le cas où il a déjà rentré son code de vérification concernant la création de compte** => Redirection vers le dashboard
       - **Dans le cas où il n'a pas déjà rentré son code de vérificaiton concernant la création de compte** => Redirection vers la vérification du compte
 
-### ***4.2*** Création Compte 
-***Fonctionnalité***: permet nouveaux utilisateurs créer compte 
-***Vérification unicité***: vérifie adresse email déjà utilisée affiche message erreur si c'est le cas 
-***Redirection***: redirection page connexion après création réussie 
+### ***4.1.2*** Création Compte 
+- **Fonctionnalité** : Permet aux nouveaux utilisateurs de créer un compte.
+- **Interface utilisateur** :
+   - Champs de saisie pour : nom d'utilisateur, adresse e-mail, mot de passe, confirmation du mot de passe
+   - [TODO] Case à cocher pour accepter les conditions d'utilisation
+   - Bouton "Créer un compte"
+- **Vérification d'unicité** :
+   - Si l'adresse mail est déjà utilisée, message d'erreur : "Cette adresse email est déjà utilisée ! Essayer de vous connecter avec celle-ci" + Encadré en rouge
+- **Processus de création** :
+   - Envoie d'un email de confirmation avec un lien et un code de vérification. Si ce code n'est pas rentré dans les 30 minutes, le compte de crée par l'utilisateur est automatiquement supprimé
+   - Compte crée mais inactif jusqu'à la vérification par code de vérification
+- **Redirection** :
+   - Après la création réussie : Page de confirmations avec les instructions pour vérifier l'email
 
 ### ***4.3*** Gestion Exercices 
 ***Fonctionnalité***: permet utilisateurs enregistrer suivre exercices 
