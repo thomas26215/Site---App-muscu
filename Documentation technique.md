@@ -10,7 +10,7 @@
 3. [Bases de Données](#bases-de-données)
    - 3.1. [Structure des Tables SQL](#31-structure-des-tables-sql)
       - 3.1.1. [Fichier utilisateur.db](#311-fichier-utilisateurdb)
-      - 3.1.2. [Fichier exercises.db](#312fichier-exercisesdb)
+      - 3.1.2. [Fichier exercises.db](#312fichierexercisesdb)
       - 3.1.3. [Fichier seances.db](#313fichier-seancesdb)
    - 3.2. [Relations entre les Tables](#32-relations-entre-les-tables)
 4. [Fonctionnalités](#fonctionnalités)
