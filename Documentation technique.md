@@ -219,9 +219,29 @@ Voici la version mise à jour selon vos instructions :
 ## Fonctionnalités
 
 ### ***4.1*** Page Connexion 
-***Fonctionnalité***: permet aux utilisateurs se connecter à leur compte 
-***Gestion erreurs***: affiche message erreur si nom utilisateur ou mot passe incorrect 
-***Redirection***: redirection page d'accueil après connexion réussie 
+- **Fonctionnalité** : permet aux utilisateurs se connecter à leur compte existant
+- **Interface utilisateur** :
+   - Champs de saisie pour l'adresse e-mail de l'utilisateur
+   - Champs de saisie pour le mot de passe (masqué)
+   - Bouton "Se Se connecter"
+   - [TODO] Lien "Mot de passe oublié ?
+   - Lien "Créer un compte"
+- **Gestion erreurs** :
+   - Si l'utilisateur se trompe d'e-mail ou de mot de passe
+      - Message d'erreur en rouge : "Email ou mot de passe incorrect"
+      - Les champs d'email et de mot de passe sont encadrés en rouge
+   - [TODO] Après 3 tentatives échouées
+      - Message : "Trop de tentatives. Il faut réessayer dans 5 minutes"
+      - Bouton de connexion désactivé pendant 5 minutes
+   - **Sécurité** :
+      - [TODO] Utilisation de HTTPS pour la transmission de données
+      - Hachage de mot de passe côté serveur
+      - Protection contre les attaques XSS
+      - [TODO]Protection contres les attaques par force brute 
+- **Redirection** :
+   - Si l'utilisatteur rentre les bons identifiants :
+      - **Dans le cas où il a déjà rentré son code de vérification concernant la création de compte** => Redirection vers le dashboard
+      - **Dans le cas où il n'a pas déjà rentré son code de vérificaiton concernant la création de compte** => Redirection vers la vérification du compte
 
 ### ***4.2*** Création Compte 
 ***Fonctionnalité***: permet nouveaux utilisateurs créer compte 
