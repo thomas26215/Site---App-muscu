@@ -27,154 +27,191 @@ Description à fournir
 
 ## Bases de Données
 
-### 3.1. Structure des Tables SQL
+### Structure des tables SQL
 
-#### 3.1.1. **Fichier `utilisateurs.db`**
+#### 3.1.1. **Fichier `utilisateur.db**
+
+Voici la version mise à jour selon vos instructions :
+
 - **TABLE `utilisateurs`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de l'utilisateur.
-  - `pseudo` **(VARCHAR(50), NOT NULL)** : Le pseudo de la personne.
-  - `email` **(VARCHAR(100), NOT NULL, UNIQUE)** : L'email de la personne. Deux personnes ne peuvent pas avoir le même email.
-  - `mot_de_passe` **(VARCHAR(255), NOT NULL)** : Mot de passe hashé.
-  - `date_inscription` **(DATETIME, DEFAULT CURRENT_TIMESTAMP)** : La date d'inscription de la personne, automatiquement la date d'aujourd'hui.
-  - `derniere_connexion` **(DATETIME)** : La date de la dernière connexion de l'utilisateur.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'utilisateur.
+    - `pseudo` **VARCHAR(50) NOT NULL** : Le pseudo de la personne.
+    - `email` **VARCHAR(100) NOT NULL UNIQUE** : L'email de la personne. Deux personnes ne peuvent pas avoir le même email.
+    - `mot_de_passe` **VARCHAR(255) NOT NULL** : Mot de passe hashé.
+    - `date_inscription` **DATETIME DEFAULT CURRENT_TIMESTAMP** : La date d'inscription de la personne, automatiquement la date d'aujourd'hui.
+    - `derniere_connexion` **DATETIME** : La date de la dernière connexion de l'utilisateur.
 
 - **TABLE `profils`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique du profil.
-  - `utilisateur_id` **(INTEGER, NOT NULL, UNIQUE)** : Identifiant de l'utilisateur associé.
-  - `nom` **(VARCHAR(50), NOT NULL)** : Nom de l'utilisateur.
-  - `prenom` **(VARCHAR(50), NOT NULL)** : Prénom de l'utilisateur.
-  - `date_naissance` **(DATE)** : Date de naissance de l'utilisateur.
-  - `sexe` **(VARCHAR(10))** : Sexe de l'utilisateur.
-  - `biographie` **(TEXT)** : Biographie de l'utilisateur.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique du profil.
+    - `utilisateur_id` **INTEGER NOT NULL UNIQUE** : Identifiant de l'utilisateur associé.
+    - `nom` **VARCHAR(50) NOT NULL** : Nom de l'utilisateur.
+    - `prenom` **VARCHAR(50) NOT NULL** : Prénom de l'utilisateur.
+    - `date_naissance` **DATE** : Date de naissance de l'utilisateur.
+    - `sexe` **VARCHAR(10)** : Sexe de l'utilisateur.
+    - `biographie` **TEXT** : Biographie de l'utilisateur.
 
 - **TABLE `roles`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique du rôle.
-  - `nom` **(VARCHAR(20), NOT NULL, UNIQUE)** : Nom du rôle.
-  - `description` **(TEXT)** : Description du rôle.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique du rôle.
+    - `nom` **VARCHAR(20) NOT NULL UNIQUE** : Nom du rôle.
+    - `description` **TEXT** : Description du rôle.
 
 - **TABLE `utilisateurs_roles`** :
-  - `utilisateur_id` **(INTEGER, NOT NULL)** : Identifiant de l'utilisateur.
-  - `role_id` **(INTEGER, NOT NULL)** : Identifiant du rôle.
-  - Clé primaire composite sur (utilisateur_id, role_id).
+    - `utilisateur_id` **INTEGER NOT NULL** : Identifiant de l'utilisateur.
+    - `role_id` **INTEGER NOT NULL** : Identifiant du rôle.
+    - Clé primaire composite sur (utilisateur_id, role_id).
 
 - **TABLE `preferences`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de la préférence.
-  - `utilisateur_id` **(INTEGER, NOT NULL, UNIQUE)** : Identifiant de l'utilisateur associé.
-  - `theme` **(VARCHAR(20))** : Thème préféré de l'utilisateur.
-  - `notifications_email` **(BOOLEAN, DEFAULT TRUE)** : Préférence pour les notifications par email.
-  - `langue` **(VARCHAR(10))** : Langue préférée de l'utilisateur.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de la préférence.
+    - `utilisateur_id` **INTEGER NOT NULL UNIQUE** : Identifiant de l'utilisateur associé.
+    - `theme` **VARCHAR(20)** : Thème préféré de l'utilisateur.
+    - `notifications_email` **BOOLEAN DEFAULT TRUE** : Préférence pour les notifications par email.
+    - `langue` **VARCHAR(10)** : Langue préférée de l'utilisateur.
 
 - **TABLE `recuperation_mot_de_passe`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de la demande de récupération.
-  - `utilisateur_id` **(INTEGER, NOT NULL)** : Identifiant de l'utilisateur associé.
-  - `token` **(VARCHAR(255), NOT NULL, UNIQUE)** : Token de récupération.
-  - `date_expiration` **(DATETIME, NOT NULL)** : Date d'expiration du token.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de la demande de récupération.
+    - `utilisateur_id` **INTEGER NOT NULL** : Identifiant de l'utilisateur associé.
+    - `token` **VARCHAR(255) NOT NULL UNIQUE** : Token de récupération.
+    - `date_expiration` **DATETIME NOT NULL** : Date d'expiration du token.
 
 - **TABLE `verifications_email`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de la vérification.
-  - `utilisateur_id` **(INTEGER, NOT NULL)** : Identifiant de l'utilisateur associé.
-  - `token` **(VARCHAR(255), NOT NULL, UNIQUE)** : Token de vérification.
-  - `date_expiration` **(DATETIME, NOT NULL, DEFAULT (datetime('now', '+30 minutes')))** : Date d'expiration du token.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de la vérification.
+    - `utilisateur_id` **INTEGER NOT NULL** : Identifiant de l'utilisateur associé.
+    - `token` **VARCHAR(255) NOT NULL UNIQUE** : Token de vérification.
+    - `date_expiration` **DATETIME NOT NULL DEFAULT (datetime('now', '+30 minutes'))** : Date d'expiration du token.
 
-#### 3.1.2. **Fichier `exercises.db`**
+
+#### 3.1.2. **Fichier `exercises.db`**
+
 - **TABLE `exercises`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de l'exercice.
-  - `id_utilisateur` **(INTEGER, NOT NULL)** : Identifiant de l'utilisateur qui a créé l'exercice.
-  - `name` **(VARCHAR(255), NOT NULL)** : Nom de l'exercice.
-  - `description` **(VARCHAR(1000), NOT NULL)** : Description détaillée de l'exercice.
-  - `type` **(VARCHAR(50), NOT NULL)** : Type d'exercice.
-  - `created_at` **(DATETIME, DEFAULT CURRENT_TIMESTAMP)** : Date de création de l'exercice.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'exercice.
+    - `id_utilisateur` **INTEGER NOT NULL** : Identifiant de l'utilisateur qui a créé l'exercice.
+    - `name` **VARCHAR(255) NOT NULL** : Nom de l'exercice.
+    - `description` **VARCHAR(1000) NOT NULL** : Description détaillée de l'exercice.
+    - `type` **VARCHAR(50) NOT NULL** : Type d'exercice.
+    - `created_at` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de création de l'exercice.
 
 - **TABLE `visibility_exercises`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de la visibilité.
-  - `id_exercise` **(INTEGER, NOT NULL, UNIQUE)** : Identifiant de l'exercice associé.
-  - `visibility` **(BOOLEAN, NOT NULL, DEFAULT false)** : Visibilité de l'exercice.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de la visibilité.
+    - `id_exercise` **INTEGER NOT NULL UNIQUE** : Identifiant de l'exercice associé.
+    - `visibility` **BOOLEAN NOT NULL DEFAULT FALSE** : Visibilité de l'exercice.
 
 - **TABLE `tags`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique du tag.
-  - `tag` **(VARCHAR(255), NOT NULL, UNIQUE)** : Nom du tag.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique du tag.
+    - `tag` **VARCHAR(255) NOT NULL UNIQUE** : Nom du tag.
 
 - **TABLE `exercise_tags`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de l'association.
-  - `id_exercise` **(INTEGER, NOT NULL)** : Identifiant de l'exercice.
-  - `id_tag` **(INTEGER, NOT NULL)** : Identifiant du tag.
-  - Contrainte d'unicité sur (id_exercise, id_tag).
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'association.
+    - `id_exercise` **INTEGER NOT NULL** : Identifiant de l'exercice.
+    - `id_tag` **INTEGER NOT NULL** : Identifiant du tag.
+    - Contrainte d'unicité sur **`(id_exercise, id_tag)`**.
 
 - **TABLE `exercise_community`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de l'interaction communautaire.
-  - `id_exercise` **(INTEGER, NOT NULL, UNIQUE)** : Identifiant de l'exercice associé.
-  - `likes` **(INTEGER, NOT NULL, DEFAULT 0)** : Nombre de likes pour l'exercice.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'interaction communautaire.
+    - `id_exercise` **INTEGER NOT NULL UNIQUE** : Identifiant de l'exercice associé.
+    - `likes` **INTEGER NOT NULL DEFAULT 0** : Nombre de likes pour l'exercice.
 
 - **TABLE `comments`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique du commentaire.
-  - `id_exercise` **(INTEGER, NOT NULL)** : Identifiant de l'exercice commenté.
-  - `id_user` **(INTEGER, NOT NULL)** : Identifiant de l'utilisateur qui a commenté.
-  - `comment` **(TEXT, NOT NULL)** : Contenu du commentaire.
-  - `created_at` **(DATETIME, DEFAULT CURRENT_TIMESTAMP)** : Date de création du commentaire.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique du commentaire.
+    - `id_exercise` **INTEGER NOT NULL** : Identifiant de l'exercice commenté.
+    - `id_user` **INTEGER NOT NULL** : Identifiant de l'utilisateur qui a commenté.
+    - `comment` **TEXT NOT NULL** : Contenu du commentaire.
+    - `created_at` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de création du commentaire.
 
 - **TABLE `ratings`** :
-  - `id` **(INTEGER, clé primaire, auto-increment)** : Identifiant unique de l'évaluation.
-  - `id_exercise` **(INTEGER, NOT NULL)** : Identifiant de l'exercice évalué.
-  - `id_user` **(INTEGER, NOT NULL)** : Identifiant de l'utilisateur qui a évalué.
-  - `rating` **(INTEGER CHECK(rating >=1 AND rating <=5))**: Note attribuée (de 1 à 5).
-  - created_at **DATETIME DEFAULT CURRENT_TIMESTAMP**: Date de l'évaluation.
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'évaluation.
+    - `id_exercise` **INTEGER NOT NULL** : Identifiant de l'exercice évalué.
+    - `id_user` **INTEGER NOT NULL** : Identifiant de l'utilisateur qui a évalué.
+    - `rating` **INTEGER CHECK(rating >= 1 AND rating <= 5)** : Note attribuée (de 1 à 5).
+    - `created_at` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de l'évaluation.
 
-- **TABLE notifications**:
-  - id **INTEGER PRIMARY KEY AUTOINCREMENT**: Identifiant unique de la notification
-  - user_id **INTEGER NON NUL**, identifiant utilisateur concerné
-  - message **TEXT NON NUL**, contenu notification
-  - is_read **BOOLEAN DEFAULT FALSE**, statut lecture notification
-  - created_at **DATETIME DEFAULT CURRENT_TIMESTAMP**, date création notification
+- **TABLE `notifications`** :
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de la notification.
+    - `user_id` **INTEGER NOT NULL** : Identifiant de l'utilisateur concerné.
+    - `message` **TEXT NOT NULL** : Contenu de la notification.
+    - `is_read` **BOOLEAN DEFAULT FALSE** : Statut de lecture de la notification.
+    - `created_at` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de création de la notification.
 
-- **TABLE exercise_stats**
-  - id INTEGER PRIMARY KEY AUTOINCREMENT: identifiant unique des statistiques
-  - id_exercise INTEGER NON NUL UNIQUE: identifiant exercice associé
-  - views INTEGER DEFAULT ZERO: nombre vues exercice
-  - interactions INTEGER DEFAULT ZERO: nombre interactions exercice
-  - last_interaction DATETIME DEFAULT CURRENT_TIMESTAMP: date dernière interaction
+- **TABLE `exercise_stats`** :
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique des statistiques.
+    - `id_exercise` **INTEGER NOT NULL UNIQUE** : Identifiant de l'exercice associé.
+    - `views` **INTEGER DEFAULT 0** : Nombre de vues de l'exercice.
+    - `interactions` **INTEGER DEFAULT 0** : Nombre d'interactions avec l'exercice.
+    - `last_interaction` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de la dernière interaction.
 
-#### ***3.1.3*** Fichier seances.db
-* TABLE seance:
-* id INTEGER PRIMARY KEY AUTOINCREMENT: identifiant unique séance
-* id_utilisateur INTEGER NON NUL: identifiant utilisateur associé séance
-* description (TEXT): description séance
+#### **3.1.3** Fichier seances.db
 
-* TABLE equipment:
-* id INTEGER PRIMARY KEY AUTOINCREMENT: identifiant unique équipement
-* name VARCHAR (255) NON NUL UNIQUE: nom équipement
-* description (TEXT): description équipement
 
-* TABLE exercise_types:
-* id INTEGER PRIMARY KEY AUTOINCREMENT: identifiant unique type exercice
-* type_name VARCHAR (255) NON NUL UNIQUE: nom type exercice
+- **TABLE `seance`** :
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de la séance.
+    - `id_utilisateur` **INTEGER NOT NULL** : Identifiant de l'utilisateur associé à la séance.
+    - `description` **TEXT** : Description de la séance.
 
-* TABLE exercises:
-* id INTEGER PRIMARY KEY AUTOINCREMENT: identifiant unique exercice
-* id_utilisateur INTEGER NON NUL: identifiant utilisateur qui a créé exercice
-* name VARCHAR (255) NON NUL: nom exercice
-* description VARCHAR (1000) NON NUL: description détaillée exercice
-* type VARCHAR (50) NON NUL: type exercice (musculation cardio etc.)
-* equipment_id INTEGER: identifiant équipement nécessaire
-* combat_sport VARCHAR (50): sport combat si applicable
-* created_at DATETIME DEFAULT CURRENT_TIMESTAMP: date création exercice
+- **TABLE `equipment`** :
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'équipement.
+    - `name` **VARCHAR(255) NOT NULL UNIQUE** : Nom de l'équipement.
+    - `description` **TEXT** : Description de l'équipement.
 
-### ***3.2*** Relations entre les Tables
+- **TABLE `exercise_types`** :
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique du type d'exercice.
+    - `type_name` **VARCHAR(255) NOT NULL UNIQUE** : Nom du type d'exercice.
 
-* Relation one-to-one entre utilisateurs et profils via utilisateur_id
-* Relation many-to-many entre utilisateurs et rôles via table liaison utilisateurs_roles
-* Relation one-to-one entre utilisateurs et préférences via utilisateur_id
-* Relation one-to-many entre utilisateurs et récupération_mot_de_passe via utilisateur_id
-* Relation one-to-many entre utilisateurs et vérifications_email via utilisateur_id
-* Relation one-to-many entre utilisateurs et exercices via id_utilisateur
-* Relation one-to-one entre exercices et visibility_exercises via id_exercise
-* Relation many-to-many entre exercices et tags via table liaison exercise_tags
-* Relation one-to-one entre exercices et exercise_community via id_exercise
-* Relation one-to-many entre exercices et commentaires via id_exercise 
-* Relation one-to-many entre exercices et évaluations via id_exercise 
-* Relation one-to-many entre utilisateurs et notifications via user_id 
-* Relation one-to-one entre exercices et exercise_stats via id_exercise 
-* Relation one-to-many entre utilisateurs et séances via id_utilisateur 
-* Relation one-to-many entre équipement et exercices via equipment_id 
+- **TABLE `exercises`** :
+    - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'exercice.
+    - `id_utilisateur` **INTEGER NOT NULL** : Identifiant de l'utilisateur qui a créé l'exercice.
+    - `name` **VARCHAR(255) NOT NULL** : Nom de l'exercice.
+    - `description` **VARCHAR(1000) NOT NULL** : Description détaillée de l'exercice.
+    - `type` **VARCHAR(50) NOT NULL** : Type d'exercice (musculation, cardio, etc.).
+    - `equipment_id` **INTEGER** : Identifiant de l'équipement nécessaire.
+    - `combat_sport` **VARCHAR(50)** : Sport de combat si applicable.
+    - `created_at` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de création de l'exercice.
+
+### _**3.2**_ Relations entre les Tables
+
+1. Relation one-to-one entre `utilisateurs` et `profils` via `utilisateur_id`:
+    - Chaque utilisateur a un seul profil et chaque profil appartient à un seul utilisateur.
+    - Pertinence : Permet de stocker des informations détaillées sur l'utilisateur séparément de ses informations de connexion, améliorant ainsi la structure et la sécurité des données.
+2. Relation many-to-many entre `utilisateurs` et `roles` via la table de liaison `utilisateurs_roles`:
+    - Un utilisateur peut avoir plusieurs rôles et un rôle peut être attribué à plusieurs utilisateurs.
+    - Pertinence : Offre une gestion flexible des permissions et des accès dans l'application.
+3. Relation one-to-one entre `utilisateurs` et `preferences` via `utilisateur_id`:
+    - Chaque utilisateur a un seul ensemble de préférences.
+    - Pertinence : Permet une personnalisation de l'expérience utilisateur sans surcharger la table principale des utilisateurs.
+4. Relation one-to-many entre `utilisateurs` et `recuperation_mot_de_passe` via `utilisateur_id`:
+    - Un utilisateur peut avoir plusieurs demandes de récupération de mot de passe au fil du temps.
+    - Pertinence : Assure la sécurité en permettant la gestion des demandes de réinitialisation de mot de passe.
+5. Relation one-to-many entre `utilisateurs` et `verifications_email` via `utilisateur_id`:
+    - Un utilisateur peut avoir plusieurs tokens de vérification d'email (par exemple, en cas de changement d'email).
+    - Pertinence : Facilite le processus de vérification d'email et améliore la sécurité du compte.
+6. Relation one-to-many entre `utilisateurs` et `exercises` via `id_utilisateur`:
+    - Un utilisateur peut créer plusieurs exercices.
+    - Pertinence : Permet aux utilisateurs de contribuer au contenu de l'application en créant leurs propres exercices.    
+7. Relation one-to-one entre `exercises` et `visibility_exercises` via `id_exercise`:
+    - Chaque exercice a un seul paramètre de visibilité.
+    - Pertinence : Offre un contrôle granulaire sur la visibilité de chaque exercice, permettant aux utilisateurs de décider s'ils veulent partager leurs créations.
+8. Relation many-to-many entre `exercises` et `tags` via la table de liaison `exercise_tags`:
+    - Un exercice peut avoir plusieurs tags et un tag peut être associé à plusieurs exercices.
+    - Pertinence : Facilite la catégorisation et la recherche des exercices.    
+9. Relation one-to-one entre `exercises` et `exercise_community` via `id_exercise`:
+    - Chaque exercice a une seule entrée dans la table des interactions communautaires.
+    - Pertinence : Permet de suivre l'engagement de la communauté pour chaque exercice.
+10. Relation one-to-many entre `exercises` et `comments` via `id_exercise`:
+    - Un exercice peut avoir plusieurs commentaires.
+    - Pertinence : Favorise l'interaction entre les utilisateurs et le partage de retours sur les exercices.
+11. Relation one-to-many entre `exercises` et `ratings` via `id_exercise`:
+    - Un exercice peut avoir plusieurs évaluations.
+    - Pertinence : Permet aux utilisateurs de noter les exercices, fournissant ainsi un indicateur de qualité.
+12. Relation one-to-many entre `utilisateurs` et `notifications` via `user_id`:
+    - Un utilisateur peut recevoir plusieurs notifications.
+    - Pertinence : Facilite la communication avec les utilisateurs et les tient informés des activités pertinentes.
+13. Relation one-to-one entre `exercises` et `exercise_stats` via `id_exercise`:
+    - Chaque exercice a une seule entrée de statistiques.
+    - Pertinence : Permet de suivre l'utilisation et la popularité de chaque exercice.
+14. Relation one-to-many entre `utilisateurs` et `seance` via `id_utilisateur`:
+    - Un utilisateur peut créer plusieurs séances d'entraînement.
+    - Pertinence : Permet aux utilisateurs de planifier et d'organiser leurs entraînements.
+15. Relation one-to-many entre `equipment` et `exercises` via `equipment_id`:
+    - Un équipement peut être utilisé dans plusieurs exercices.
+    - Pertinence : Facilite la recherche d'exercices basés sur l'équipement disponible pour l'utilisateur. 
 
 ## Fonctionnalités
 
