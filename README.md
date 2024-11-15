@@ -12,6 +12,7 @@
 
 ## Introduction
 Ce projet vise à développer la version web d'une application mobile de suivi de musculation. L'application permet aux utilisateurs de suivre leurs séances d'entraînement, de partager des routines et d'interagir avec d'autres utilisateurs, notamment des enseignants et des élèves.
+N'hésitez pas à lire le fichier **Documentation technique.md** pour obtenir plus d'informations spécifiques sur le projet
 
 ## Technologies utilisées
 - **HTML** : Structure du contenu web.
