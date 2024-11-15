@@ -8,7 +8,7 @@
 1. [Introduction](#introduction)
 2. [Aperçu du Projet](#aperçu-du-projet)
 3. [Bases de Données](#bases-de-données)
-   - 3.1. [Structure des Tables SQL](#structure-des-tables-sql)
+   - 3.1. [Structure des Tables SQL](#31-structure-des-tables-sql)
    - 3.2. [Relations entre les Tables](#relations-entre-les-tables)
 4. [Fonctionnalités](#fonctionnalités)
    - 4.1. [Page de Connexion](#page-de-connexion)
@@ -27,7 +27,7 @@ Description à fournir
 
 ## Bases de Données
 
-### Structure des tables SQL
+### 3.1 Structure des tables SQL
 
 #### 3.1.1. **Fichier `utilisateur.db**
 
