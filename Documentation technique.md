@@ -277,9 +277,6 @@ Description à fournir
     - Un exercice peut être inclus dans plusieurs séquences alternées.  
     - Pertinence : Permet de réutiliser les exercices existants dans des séquences variées, garantissant leur cohérence dans les différents types d'entraînement.  
 
----
-
-Si vous avez d'autres ajustements ou points spécifiques, je suis à votre disposition. 😊
 
 ### **3.3.** Cas d'utilisations des tables
 
