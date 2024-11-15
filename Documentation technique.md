@@ -168,7 +168,7 @@ Voici la version mise à jour selon vos instructions :
     - `combat_sport` **VARCHAR(50)** : Sport de combat si applicable.
     - `created_at` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de création de l'exercice.
 
-### **3.2** Relations entre les Tables
+### **3.2.** Relations entre les Tables
 
 1. Relation one-to-one entre `utilisateurs` et `profils` via `utilisateur_id`:
     - Chaque utilisateur a un seul profil et chaque profil appartient à un seul utilisateur.
@@ -216,6 +216,21 @@ Voici la version mise à jour selon vos instructions :
     - Un équipement peut être utilisé dans plusieurs exercices.
     - Pertinence : Facilite la recherche d'exercices basés sur l'équipement disponible pour l'utilisateur. 
 
+### **3.3.** Cas d'utilisations des tables
+
+#### Ajouter une séance de différents exrcices complexes
+
+- **Objectif** : Ajouter 3 exercices :
+   1. Un exercices de types répétitions : Chaque exercice fait 5 répétitions de 10 kilos avec débord 30s de récup puis 1min de récup et une récup de 2mins
+   2. Un exercice de type dégression : D'abord 10kg puis 5 kg puis 3kg avec 10 secondes entre chaque exercice
+   3. Deux exercice alternatifs : On enchaîne développé couché et curl marteau avec une minutes de chaque sans pause le tout 3 fois avec une minute par exo
+ 
+  - **Comment faire** :
+     - Créer une séance pour le premier utilisateur : `INSERT INTO seance (id_utilisateur, descripition) values (5, 'Description de la séance
+  - **Ajouter le premier exo** [TODO]
+
+#### **3.3.3.**
+
 ## Fonctionnalités
 
 ### **4.1** Page Login
@@ -246,7 +261,7 @@ Voici la version mise à jour selon vos instructions :
       - **Dans le cas où il a déjà rentré son code de vérification concernant la création de compte** => Redirection vers le dashboard
       - **Dans le cas où il n'a pas déjà rentré son code de vérificaiton concernant la création de compte** => Redirection vers la vérification du compte
 
-### ***4.1.2*** Création Compte 
+### **4.1.2** Création Compte 
 - **Fonctionnalité** : Permet aux nouveaux utilisateurs de créer un compte.
 - **Interface utilisateur** :
    - Champs de saisie pour : nom d'utilisateur, adresse e-mail, mot de passe, confirmation du mot de passe
@@ -260,7 +275,7 @@ Voici la version mise à jour selon vos instructions :
 - **Redirection** :
    - Après la création réussie : Page de confirmations avec les instructions pour vérifier l'email
 
-### ***4.3*** Gestion Exercices 
+### **4.3** Gestion Exercices 
 ***Fonctionnalité***: permet utilisateurs enregistrer suivre exercices 
 ***Suivi performances***: enregistre résultats exercices analyse ultérieure 
 ***Recommandations***: propose ajustements basés performances précédentes 
