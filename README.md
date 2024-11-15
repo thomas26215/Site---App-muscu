@@ -12,6 +12,7 @@
 
 ## Introduction
 Ce projet vise à développer la version web d'une application mobile de suivi de musculation. L'application permet aux utilisateurs de suivre leurs séances d'entraînement, de partager des routines et d'interagir avec d'autres utilisateurs, notamment des enseignants et des élèves.
+**[IDEE]** J'ai également en idée la création d'une série d'applications. C'est à dire que je crée une application destinée à la préparations physique des skieurs en été, une autre destinée à la préparation physique pour les sports de combat, une pour la préparation physique au tennis, une pour la préparation physique pour des sports d'athlétisme... Chaque application aurait la même base : cette base de bleu et blanc mais chaque appli aurait sa petite touche personnelle au niveau de la couleur (certains liens survolés pas la souris, l'affichage des statistiques...)
 N'hésitez pas à lire le fichier **Documentation technique.md** pour obtenir plus d'informations spécifiques sur le projet
 
 ## Technologies utilisées
