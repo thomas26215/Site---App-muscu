@@ -9,7 +9,10 @@
 2. [Aperçu du Projet](#aperçu-du-projet)
 3. [Bases de Données](#bases-de-données)
    - 3.1. [Structure des Tables SQL](#31-structure-des-tables-sql)
-   - 3.2. [Relations entre les Tables](#relations-entre-les-tables)
+      - 3.1.1. [Fichier utilisateur.db](#311-fichier-utilisateurdb)
+      - 3.1.2. [Fichier exercises.db](#312-fichier-exercisesdb)
+      - 3.1.3. [Fichier seances.db](#313-fichier-seancesdb)
+   - 3.2. [Relations entre les Tables](#32-relations-entre-les-tables)
 4. [Fonctionnalités](#fonctionnalités)
    - 4.1. [Page de Connexion](#page-de-connexion)
    - 4.2. [Création de Compte](#création-de-compte)
@@ -165,7 +168,7 @@ Voici la version mise à jour selon vos instructions :
     - `combat_sport` **VARCHAR(50)** : Sport de combat si applicable.
     - `created_at` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de création de l'exercice.
 
-### _**3.2**_ Relations entre les Tables
+### **3.2** Relations entre les Tables
 
 1. Relation one-to-one entre `utilisateurs` et `profils` via `utilisateur_id`:
     - Chaque utilisateur a un seul profil et chaque profil appartient à un seul utilisateur.
