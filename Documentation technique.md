@@ -506,6 +506,7 @@ Description à fournir
 ***Connexion utilisateur***
 1.L'utilisateur saisit son nom d'utilisateur mot passe 
 2.Si informations correctes il est redirigé vers page d'accueil 
+Pour clarifier le contenu attendu des tableaux associatifs dans les différentes fonctions de la classe `UserBase`, voici une documentation mise à jour qui précise les clés et les types de données nécessaires pour chaque tableau :
 
 ***Création compte***
 1.L'utilisateur remplit formulaire avec nom d'utilisateur email mot passe 
