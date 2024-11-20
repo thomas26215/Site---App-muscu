@@ -295,8 +295,23 @@ Description à fournir
 
 ## Fonctions de classes
 
+### **5.1** UserBase.php
 
+#### **5.1.1. `getIdWithEmail`
 
+- **Objectif** : Récupérer un utilisateur de la BDD `utilisateurs`
+- **Paramètre** : `email` (string) : L'adresse mail de l'utilisateur
+- **Retour** : **Boolean** - `true` si l'ajout a été fait, `false` sinon
+- **Exceptions** : Aucune
+- **Exemple** : `getIdWithEmail('venouilthomas123456@gmail.com');`
+
+### **5.1.2.** `addUser`
+
+- **Objectf** : Ajouter un utilisateur à la BDD `utilisateurs`
+- **Paramètre** : `informations` (tableau associatif) : Les données de la personne
+- **Retour** : **Boolean** - `true` si l'ajout a été fait, `false` sinon
+- **Exception** : Aucune
+- **Exemple** : `addUser(['pseudo' => 'Thomas', 'email' => 'venouilthomas123456@gmail.com', 'mot_de_passe' => 'mdp', 'nom' => 'Thomas', 'nom' => 'Venouil', 'date_naissance' => '18-09-2005', 'sexe' => 'homme']);`
 
 ## Fonctionnalités
 
