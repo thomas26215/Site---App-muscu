@@ -16,8 +16,6 @@
    - 3.3. [Cas d'utilisations des tables](#33cas-dutilisations-des-tables)
 4. [Fonctions de classe](#fonctions-de-classes)
     - 4.1. [Bases de données]
-        - 4.1.1. [UserBase.php]
-        - 4.1.2. [Utilitaire.php]
 5. [Fonctionnalités](#fonctionnalités)
 6. [Scénarios d'Utilisation](#scénarios-dutilisation)
 7. [Conclusion](#conclusion)
