@@ -4,7 +4,7 @@
 
 ---
 
-## Table des Matières
+# Table des Matières
 1. [Introduction](#introduction)
 2. [Aperçu du Projet](#aperçu-du-projet)
 3. [Bases de Données](#bases-de-données)
@@ -23,17 +23,17 @@
 
 ---
 
-## Introduction
+# Introduction
 Ce document présente les spécifications techniques et fonctionnelles du projet [Nom à définir]. Il décrit la structure des bases de données, les principales fonctionnalités et le déroulement des interactions utilisateur.
 
-## Aperçu du Projet
+# Aperçu du Projet
 Description à fournir
 
-## Bases de Données
+# Bases de Données
 
-### 3.1 Structure des tables SQL
+## 3.1 Structure des tables SQL
 
-#### 3.1.1. **Fichier `utilisateur.db**
+### 3.1.1. **Fichier `utilisateur.db**
 
 - **TABLE `utilisateurs`** :
     - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'utilisateur.
@@ -82,7 +82,7 @@ Description à fournir
     - `date_expiration` **DATETIME NOT NULL DEFAULT (datetime('now', '+30 minutes'))** : Date d'expiration du token.
 
 
-#### 3.1.2. **Fichier `exercises.db`**
+### 3.1.2. **Fichier `exercises.db`**
 
 - **TABLE `exercises`** :
     - `id` **INTEGER PRIMARY KEY AUTOINCREMENT** : Identifiant unique de l'exercice.
@@ -140,7 +140,7 @@ Description à fournir
     - `interactions` **INTEGER DEFAULT 0** : Nombre d'interactions avec l'exercice.
     - `last_interaction` **DATETIME DEFAULT CURRENT_TIMESTAMP** : Date de la dernière interaction.
 
-#### **3.1.3** Fichier seances.db
+### **3.1.3** Fichier seances.db
 
 
 - **Table `seance`**
@@ -200,7 +200,7 @@ Description à fournir
    - `repetitions` **INTEGER NOT NULL**: Nombre total de répétitions pour cet exercice dans cette série
 
 
-### **3.2.** Relations entre les Tables
+## **3.2.** Relations entre les Tables
 
 1. Relation one-to-one entre `utilisateurs` et `profils` via `utilisateur_id`:
     - Chaque utilisateur a un seul profil et chaque profil appartient à un seul utilisateur.
@@ -279,9 +279,9 @@ Description à fournir
     - Pertinence : Permet de réutiliser les exercices existants dans des séquences variées, garantissant leur cohérence dans les différents types d'entraînement.  
 
 
-### **3.3.** Cas d'utilisations des tables
+## **3.3.** Cas d'utilisations des tables
 
-#### Ajouter une séance de différents exrcices complexes
+### Ajouter une séance de différents exrcices complexes
 
 - **Objectif** : Ajouter 3 exercices :
    1. Un exercices de types répétitions : Chaque exercice fait 5 répétitions de 10 kilos avec débord 30s de récup puis 1min de récup et une récup de 2mins
@@ -293,13 +293,13 @@ Description à fournir
   - **Ajouter le premier exo** [TODO]
 
 
-## Fonctions de classes
+# Fonctions de classes
 
+## **4.1.** Bases de données
+### **4.1.1.** Gestion des utilisateurs
 
-#### **4.1.** Gestion des utilisateurs
-
-##### **4.1.1.** Récupération d'informations
-###### **4.1.1.1. `getIdWithEmail`**
+#### **4.1.1.1.** Récupération d'informations
+##### **4.1.1.1.1. `getIdWithEmail`**
 - **Objectif** : Récupérer l'identifiant d'un utilisateur à partir de son email.
 - **Paramètre** : 
   - `email` (string) : L'email de l'utilisateur.
@@ -311,7 +311,7 @@ Description à fournir
   $userId = getIdWithEmail('example@gmail.com');
   ```
 
-###### **4.1.1.2. `checkIfMailExist`**
+###### **4.1.1.1.2. `checkIfMailExist`**
 - **Objectif** : Vérifier si un email existe dans la base de données.
 - **Paramètre** : 
   - `email` (string) : L'email à vérifier.
@@ -323,7 +323,7 @@ Description à fournir
   $exists = checkIfMailExist('example@gmail.com');
   ```
 
-##### **4.1.2.** Ajout et gestion des utilisateurs
+##### **4.1.1.2.** Ajout et gestion des utilisateurs
 ###### **4.1.2.1. `addUser`**
 - **Objectif** : Ajouter un nouvel utilisateur à la base de données.
 - **Paramètre** :
@@ -351,7 +351,7 @@ Description à fournir
   ]);
   ```
 
-###### **4.1.2.2. `deleteUser`**
+###### **4.1.1.2.2. `deleteUser`**
 - **Objectif** : Supprimer un utilisateur et toutes ses données associées.
 - **Paramètre** :
   - `id` (int) : L'identifiant de l'utilisateur à supprimer.
@@ -365,10 +365,10 @@ Description à fournir
 
 ---
 
-#### **4.2.** Gestion des mots de passe
+#### **4.1.2.** Gestion des mots de passe
 
-##### **4.2.1.** Réinitialisation et mise à jour des mots de passe
-###### **4.2.1.1. `askNewPassword`**
+##### **4.1.2.1.** Réinitialisation et mise à jour des mots de passe
+###### **4.1.2.1.1. `askNewPassword`**
 - **Objectif** : Demander un nouveau mot de passe pour un utilisateur.
 - **Paramètre** :
   - `email` (string) : L'adresse email de l'utilisateur.
@@ -380,7 +380,7 @@ Description à fournir
   $requested = askNewPassword('example@gmail.com');
   ```
 
-###### **4.2.1.2. `insertNewPassword`**
+###### **4.1.2.1.2. `insertNewPassword`**
 - **Objectif** : Insérer un nouveau mot de passe après vérification du code.
 - **Paramètres** :
   - `email` (string) : L'adresse email associée à l'utilisateur.
@@ -397,10 +397,10 @@ Description à fournir
 ---
 
 
-#### **4.3.** Gestion des codes de vérification
+#### **4.1.3.** Gestion des codes de vérification
 
-##### **4.3.1.** Vérification des codes
-###### **4.3.1.1. `verifyAccountWithCode`**
+##### **4.1.3.1.** Vérification des codes
+###### **4.1.3.1.1. `verifyAccountWithCode`**
 - **Objectif** : Vérifier si le code de vérification correspond à celui stocké pour un utilisateur donné.
 - **Paramètres** :
   - `codeVerification` (string) : Le code à vérifier.
@@ -413,7 +413,7 @@ Description à fournir
   $isVerified = verifyAccountWithCode('CODE123', 'example@gmail.com');
   ```
 
-###### **4.3.1.2. `generateAndStoreVerificationCode`**
+###### **4.1.3.1.2. `generateAndStoreVerificationCode`**
 - **Objectif** : Générer un code de vérification aléatoire et le stocker dans la base de données pour l'email spécifié.
 - **Paramètre** :
   - `email` (string) : L'email de l'utilisateur pour lequel le code doit être généré.
@@ -427,10 +427,10 @@ Description à fournir
 
 ---
 
-#### **4.4. Validation des emails**
+#### **4.1.4. Validation des emails**
 
-##### **4.4.1.** Vérification des statuts des emails
-###### **4.4.1.1. `isEmailVerified`**
+##### **4.1.4.1.** Vérification des statuts des emails
+###### **4.1.4.1.1. `isEmailVerified`**
 - **Objectif** : Vérifier si l'email d'un utilisateur est validé, c'est-à-dire s'il n'y a pas de code de vérification stocké.
 - **Paramètre** :
   - `email` (string) : L'email à vérifier.
@@ -442,7 +442,7 @@ Description à fournir
   $isVerified = isEmailVerified('example@gmail.com');
   ```
 
-###### **4.4.1.2. `confirmVerificationCode`**
+###### **4.1.4.1.2. `confirmVerificationCode`**
 - **Objectif** : Confirmer le code de vérification en supprimant le code associé à l'utilisateur.
 - **Paramètre** :
   - `email` (string) : L'email dont le code doit être confirmé.
@@ -456,11 +456,11 @@ Description à fournir
 
 ---
 
-## Fonctionnalités
+# Fonctionnalités
 
-### **5.1** Page Login
+## **5.1** Page Login
 
-#### **5.1.1.** Connexion Compte
+### **5.1.1.** Connexion Compte
 
 - **Fonctionnalité** : permet aux utilisateurs se connecter à leur compte existant
 - **Interface utilisateur** :
@@ -486,7 +486,7 @@ Description à fournir
       - **Dans le cas où il a déjà rentré son code de vérification concernant la création de compte** => Redirection vers le dashboard
       - **Dans le cas où il n'a pas déjà rentré son code de vérificaiton concernant la création de compte** => Redirection vers la vérification du compte
 
-#### **5.1.2** Création Compte 
+### **5.1.2** Création Compte 
 - **Fonctionnalité** : Permet aux nouveaux utilisateurs de créer un compte.
 - **Interface utilisateur** :
    - Champs de saisie pour : nom d'utilisateur, adresse e-mail, mot de passe, confirmation du mot de passe
@@ -501,7 +501,7 @@ Description à fournir
    - Après la création réussie : Page de confirmations avec les instructions pour vérifier l'email
 
 
-## Scénarios Utilisation 
+# Scénarios Utilisation 
 
 ***Connexion utilisateur***
 1.L'utilisateur saisit son nom d'utilisateur mot passe 
@@ -511,5 +511,5 @@ Description à fournir
 1.L'utilisateur remplit formulaire avec nom d'utilisateur email mot passe 
 2.Si email existe déjà message erreur s'affiche sinon il est redirigé vers page connexion 
 
-## Conclusion 
+# Conclusion 
 Ce document fournit vue d'ensemble détaillée aspects techniques fonctionnels projet [Nom Projet]. Pour toute question suggestion veuillez contacter [Votre Nom] à [Votre Email].
