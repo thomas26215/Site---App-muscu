@@ -295,64 +295,99 @@ Description à fournir
 
 ## Fonctions de classes
 
-### **5.1** UserBase.php
+Voici la documentation technique réorganisée en quatre sections principales, conformément à votre demande :
 
-#### **5.1.1. `getIdWithEmail`**
+#### **4.1.** Gestion des utilisateurs
 
-- **Objectif** : Récupérer l'identifiant d'un utilisateur à partir de son adresse email dans la base de données `utilisateurs`.
+##### **4.1.1.** Récupération d'informations
+###### **4.1.1.1. `getIdWithEmail`**
+- **Objectif** : Récupérer l'identifiant d'un utilisateur à partir de son email.
 - **Paramètre** : 
-  - `email` (string) : L'adresse email de l'utilisateur.
+  - `email` (string) : L'email de l'utilisateur.
 - **Retour** : 
   - **Integer|null** : L'ID de l'utilisateur si trouvé, sinon `null`.
 - **Exceptions** : Aucune.
-- **Exemple** : 
-  ```php
-  $userId = getIdWithEmail('venouilthomas123456@gmail.com');
-  ```
-
-#### **5.1.2. `addUser`**
-
-- **Objectif** : Ajouter un nouvel utilisateur et son profil dans la base de données `utilisateurs`.
-- **Paramètre** : 
-  - `informations` (array) : Un tableau associatif contenant les informations de l'utilisateur, incluant les clés suivantes :
-    - `pseudo` (string) : Le pseudo de l'utilisateur.
-    - `email` (string) : L'adresse email de l'utilisateur.
-    - `mot_de_passe` (string) : Le mot de passe de l'utilisateur.
-    - `nom` (string) : Le nom de l'utilisateur.
-    - `prenom` (string) : Le prénom de l'utilisateur.
-    - `date_naissance` (string) : La date de naissance au format 'YYYY-MM-DD'.
-    - `sexe` (string) : Le genre de l'utilisateur.
-- **Retour** : 
-  - **Boolean** : `true` si l'ajout a été effectué avec succès, sinon `false`.
-- **Exceptions** : Peut lancer une exception si une erreur survient lors de l'insertion.
 - **Exemple** :
   ```php
-  $success = addUser([
-      'pseudo' => 'Thomas',
-      'email' => 'venouilthomas123456@gmail.com',
-      'mot_de_passe' => 'mdp',
-      'nom' => 'Thomas',
-      'prenom' => 'Venouil',
-      'date_naissance' => '2005-09-18',
-      'sexe' => 'homme'
-  ]);
+  $userId = getIdWithEmail('example@gmail.com');
   ```
 
-### **5.1.3. `checkIfMailExist`**
-
-- **Objectif** : Vérifier si un email existe déjà dans la base de données des utilisateurs.
-- **Paramètre** :
-  - `email` (string) : L'adresse email à vérifier.
-- **Retour** :
+###### **4.1.1.2. `checkIfMailExist`**
+- **Objectif** : Vérifier si un email existe dans la base de données.
+- **Paramètre** : 
+  - `email` (string) : L'email à vérifier.
+- **Retour** : 
   - **Boolean** : `true` si l'email existe, sinon `false`.
 - **Exceptions** : Aucune.
 - **Exemple** :
   ```php
-  $exists = checkIfMailExist('venouilthomas123456@gmail.com');
+  $exists = checkIfMailExist('example@gmail.com');
   ```
 
-### **5.1.4. `verifyAccountWithCode`**
+##### **4.1.2.** Ajout et gestion des utilisateurs
+###### **4.1.2.1. `addUser`**
+- **Objectif** : Ajouter un nouvel utilisateur à la base de données.
+- **Paramètre** : 
+  - `informations` (array) : Les informations de l'utilisateur à ajouter.
+- **Retour** : 
+  - **Boolean** : `true` si l'utilisateur a été ajouté avec succès, sinon `false`.
+- **Exceptions** : Peut lancer une exception en cas d'erreur lors de l'insertion.
+- **Exemple** :
+  ```php
+  $success = addUser(['pseudo' => 'Thomas', 'email' => 'example@gmail.com', ...]);
+  ```
 
+###### **4.1.2.2. `deleteUser`**
+- **Objectif** : Supprimer un utilisateur et toutes ses données associées.
+- **Paramètre** :
+  - `id` (int) : L'identifiant de l'utilisateur à supprimer.
+- **Retour** :
+  - **Boolean** : Retourne `true` si la suppression est réussie, sinon `false`.
+- **Exceptions** : Aucune.
+- **Exemple** :
+  ```php
+  $deleted = deleteUser(1);
+  ```
+
+---
+
+#### **4.2.** Gestion des mots de passe
+
+##### **4.2.1.** Réinitialisation et mise à jour des mots de passe
+###### **4.2.1.1. `askNewPassword`**
+- **Objectif** : Demander un nouveau mot de passe pour un utilisateur.
+- **Paramètre** :
+  - `email` (string) : L'adresse email de l'utilisateur.
+- **Retour** :
+  - **Boolean** : `true` si la demande a été traitée avec succès, sinon `false`.
+- **Exceptions** : Peut lancer une exception en cas d'erreur lors de la génération du mot de passe.
+- **Exemple** :
+  ```php
+  $requested = askNewPassword('example@gmail.com');
+  ```
+
+###### **4.2.1.2. `insertNewPassword`**
+- **Objectif** : Insérer un nouveau mot de passe après vérification du code.
+- **Paramètres** :
+  - `email` (string) : L'adresse email associée à l'utilisateur.
+  - `code` (string) : Le code de récupération fourni par l'utilisateur.
+  - `newPassword` (string) : Le nouveau mot de passe à définir pour l'utilisateur.
+- **Retour** :
+  - **Boolean**: `true` si le mot de passe a été mis à jour avec succès, sinon `false`.
+- **Exceptions**: Peut lancer une exception en cas d'erreur lors du processus d'insertion ou validation du code.
+- **Exemple**:
+  ```php
+  $updated = insertNewPassword('example@gmail.com', 'RECOVERY_CODE', 'new_secure_password');
+  ```
+
+---
+
+Voici la documentation technique réorganisée et complétée pour les fonctions concernant la vérification des comptes et la validation des emails :
+
+#### **4.3.** Gestion des codes de vérification
+
+##### **4.3.1.** Vérification des codes
+###### **4.3.1.1. `verifyAccountWithCode`**
 - **Objectif** : Vérifier si le code de vérification correspond à celui stocké pour un utilisateur donné.
 - **Paramètres** :
   - `codeVerification` (string) : Le code à vérifier.
@@ -362,49 +397,38 @@ Description à fournir
 - **Exceptions** : Peut lancer une exception en cas d'erreur lors de la vérification.
 - **Exemple** :
   ```php
-  $isVerified = verifyAccountWithCode('ABC123', 'venouilthomas123456@gmail.com');
+  $isVerified = verifyAccountWithCode('CODE123', 'example@gmail.com');
   ```
 
-### **5.1.5. `generateAndStoreVerificationCode`**
+---
 
-- **Objectif** : Générer un code de vérification aléatoire et le stocker pour un utilisateur donné.
-- **Paramètre** :
-  - `email` (string) : L'adresse email de l'utilisateur pour lequel le code doit être généré.
-- **Retour** :
-  - Aucun retour direct, mais peut afficher un message d'erreur en cas d'échec.
-- **Exceptions** : Peut lancer une exception en cas d'erreur lors du stockage du code.
-- **Exemple** :
-  ```php
-  generateAndStoreVerificationCode('venouilthomas123456@gmail.com');
-  ```
+#### **4.4.** Validation des emails
 
-### **5.1.6. `isEmailVerified`**
-
+##### **4.4.1.** Vérification des statuts des emails
+###### **4.4.1.1. `isEmailVerified`**
 - **Objectif** : Vérifier si l'email d'un utilisateur est validé, c'est-à-dire s'il n'y a pas de code de vérification stocké.
 - **Paramètre** :
-  - `email` (string) : L'adresse email à vérifier.
+  - `email` (string) : L'email à vérifier.
 - **Retour** :
-  - **Boolean** : `true` si l'email est validé, sinon `false`.
-- **Exceptions** : Aucune.
+  - **Boolean** : `true` si l'email est validé (pas de code), sinon `false`.
+- **Exceptions** : Peut lancer une exception en cas d'erreur lors de la vérification.
 - **Exemple** :
   ```php
-  $isVerified = isEmailVerified('venouilthomas123456@gmail.com');
+  $isVerified = isEmailVerified('example@gmail.com');
   ```
 
-### **5.1.7. `insertNewPassword`**
+###### **4.4.1.2. `confirmVerificationCode`**
+- **Objectif** : Confirmer le code de vérification en supprimant le code associé à l'utilisateur.
+- **Paramètre** :
+  - `email` (string) : L'email dont le code doit être confirmé.
+- **Retour** : Aucun retour direct, mais peut afficher un message d'erreur en cas d'échec.
+- **Exceptions** : Peut lancer une exception en cas d'erreur lors de la suppression du code.
+- **Exemple** :
+  ```php
+  confirmVerificationCode('example@gmail.com');
+  ```
 
-- **Objectif** : Insérer un nouveau mot de passe pour un utilisateur après vérification du code de récupération.
-- **Paramètres** :
-  - `email` (string) : L'adresse email associée à l'utilisateur.
-  - `code` (string) : Le code de récupération fourni par l'utilisateur.
-  - `newPassword` (string) : Le nouveau mot de passe à définir pour l'utilisateur.
-- **Retour** :
-  - **Boolean**: `true` si le mot de passe a été mis à jour avec succès, sinon `false`.
-- **Exceptions**: Peut lancer une exception en cas d'erreur lors du processus d'insertion ou validation du code.
-- **Exemple**:
-```php
-$updated = insertNewPassword('venouilthomas123456@gmail.com', 'RECOVERY_CODE', 'new_secure_password');
-```
+---
 
 
 
