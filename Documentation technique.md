@@ -13,11 +13,12 @@
       - 3.1.2. [Fichier exercises.db](#312fichierexercisesdb)
       - 3.1.3. [Fichier seances.db](#313fichier-seancesdb)
    - 3.2. [Relations entre les Tables](#32-relations-entre-les-tables)
-4. [Fonctions de classe]()
+   - 3.3. [Cas d'utilisations des tables](#33cas-dutilisations-des-tables)
+4. [Fonctions de classe](#fonctions-de-classes)
+    - 4.1. [Bases de données]
+        - 4.1.1. [UserBase.php]
+        - 4.1.2. [Utilitaire.php]
 5. [Fonctionnalités](#fonctionnalités)
-    -5.1. [Page Login]()
-        - 5.1.1. [Page de Connexion](#page-de-connexion)
-        - 5.1.2. [Création de Compte](#création-de-compte)
 6. [Scénarios d'Utilisation](#scénarios-dutilisation)
 7. [Conclusion](#conclusion)
 
