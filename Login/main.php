@@ -183,7 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php if($erreurPassword){
                     echo '<p style="margin: 0px; color: red; font-weight: bold;">Email ou MDP incorrect</p>';
                 }?>
-                <a href="forget_password.php" class="forgot">Mot de passe oublié ?</a>
+                <a href="../forget_password.php" class="forgot">Mot de passe oublié ?</a>
                 <button type="submit" name="submit" value="sign in">Se connecter</button>
             </form>
         </div>

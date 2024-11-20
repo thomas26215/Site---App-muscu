@@ -1,25 +1,23 @@
 <?php   
 require_once 'BDD/UserBase.php';
 $base = new UserBase();
-
+$bad_field = false;
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
     // Utilisation de $_POST['code'] pour le code de vérification
 
     //TODO: Faire le try catch correctement + Regarder comment on crée de nouvelles exceptions pour faciliter gestion
 
-    try{
-        $base->insertNewPassword($_POST['email'], $_POST['code'], $_POST['password']);
-    }catch(Exception $e){
-
+    if($base->insertNewPassword($_POST['email'], $_POST['code'], $_POST['password'])){
+        header('Location: Login/main.php');
+    }else{
+        $bad_field = true;
     }
-    
-
-    
-    
 }
 
-
-
+// Fonction pour générer le style du champ
+function getFieldStyle($bad_field) {
+    return $bad_field ? 'style="border: 2px solid red;"' : '';
+}
 ?>
 
 <!DOCTYPE html>
@@ -39,26 +37,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
             <form action="#" method="POST">
                 <h1 style="padding-top: 30px;">Code de vérification envoyé</h1>
 
-                <p> Rentrez le code et votre nouveau mot de passe</p>
+                <p>Rentrez le code et votre nouveau mot de passe</p>
+
 
                 <div class="infield" style="margin-top: 0px;">
-                    <input type="text" placeholder="Email" name="email" required />
+                    <input type="text" placeholder="Email" name="email" required <?php echo getFieldStyle($bad_field); ?> />
                     <label></label>
                 </div>
 
                 <div class="infield" style="margin-top: 0px;">
-                    <input type="text" placeholder="Code" name="code" required />
+                    <input type="text" placeholder="Code" name="code" required <?php echo getFieldStyle($bad_field); ?> />
                     <label></label>
                 </div>
                     
                 <div class="infield" style="margin-top: 0px;">
-                    <input type="text" placeholder="NewPassword" name="password" required />
+                    <input type="password" placeholder="NewPassword" name="password" required <?php echo getFieldStyle($bad_field); ?> />
                     <label></label>
                 </div>
 
-                <a href="ask_new_code.php" class="forgot" type="askNewCode" value="askNewCode" style="margin-top: 0;margin-left: -20px;">Demander un nouveau code de connexion</a>
                 <button type="submit" name="submit">Envoyer le lien</button>
-                <a href="main.php" class="forgot">Retour à la connexion</a>
+                <a href="Login/main.php" class="forgot">Retour à la connexion</a>
                 
             </form>
         </div>
@@ -66,4 +64,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
 
 </body>
 </html>
-

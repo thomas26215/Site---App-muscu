@@ -13,6 +13,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])){
     if($base->isEmailVerified($_POST['email'])){
         echo $_POST['email'];
         $base->askNewPassword($_POST['email']);
+        header('Location: new_password.php');
     }
 }
 
@@ -44,7 +45,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])){
                     <label></label>
                 </div>
                 <button type="submit" name="submit">Demander un nouveau mot de passe</button>
-                <a href="#" class="forgot">Retour à la connexion</a>
+                <a href="Login/main.php" class="forgot">Retour à la connexion</a>
             </form>
         </div>
     </div>

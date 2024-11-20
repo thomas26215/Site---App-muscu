@@ -227,6 +227,7 @@ class UserBase {
                     $this->deleteRecuperationMDP($userId);
                     
                     echo "Mot de passe mis à jour avec succès.";
+                    return true;
                 } else {
                     echo "L'email ne correspond pas au code de récupération.";
                 }
