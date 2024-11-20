@@ -49,11 +49,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 sendCodeMail($email, $prenom);
                                 header("Location: verifier_code.php");
                             } else {
-                                echo "Erreur lors de l'inscription. 1";
+                                echo "Erreur lors de l'inscription. 3";
                             }
                         }
                     } catch (Exception $e) {
-                        echo "Erreur lors de l'inscription. 2";
+                        echo "Erreur lors de l'inscription. 7";
                     }
                 }
             } else {

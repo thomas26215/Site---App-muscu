@@ -35,7 +35,7 @@ function getFieldStyle($bad_field) {
     <div class="container" id="container">
         <div class="form-container reset-password-container">
             <form action="#" method="POST">
-                <h1 style="padding-top: 30px;">Code de vérification envoyé</h1>
+                <1 style="padding-top: 30px;">Code de vérification envoyé</h1>
 
                 <p>Rentrez le code et votre nouveau mot de passe</p>
 

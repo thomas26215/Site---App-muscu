@@ -13,12 +13,13 @@
       - 3.1.2. [Fichier exercises.db](#312fichierexercisesdb)
       - 3.1.3. [Fichier seances.db](#313fichier-seancesdb)
    - 3.2. [Relations entre les Tables](#32-relations-entre-les-tables)
-4. [Fonctionnalités](#fonctionnalités)
-   - 4.1. [Page de Connexion](#page-de-connexion)
-   - 4.2. [Création de Compte](#création-de-compte)
-   - 4.3. [Gestion des Exercices](#gestion-des-exercices)
-5. [Scénarios d'Utilisation](#scénarios-dutilisation)
-6. [Conclusion](#conclusion)
+4. [Fonctions de classe]()
+5. [Fonctionnalités](#fonctionnalités)
+    -5.1. [Page Login]()
+        - 5.1.1. [Page de Connexion](#page-de-connexion)
+        - 5.1.2. [Création de Compte](#création-de-compte)
+6. [Scénarios d'Utilisation](#scénarios-dutilisation)
+7. [Conclusion](#conclusion)
 
 ---
 
@@ -291,13 +292,17 @@ Description à fournir
      - Créer une séance pour le premier utilisateur : `INSERT INTO seance (id_utilisateur, descripition) values (5, 'Description de la séance
   - **Ajouter le premier exo** [TODO]
 
-#### **3.3.3.**
+
+## Fonctions de classes
+
+
+
 
 ## Fonctionnalités
 
-### **4.1** Page Login
+### **5.1** Page Login
 
-#### **4.1.1.** Connexion Compte
+#### **5.1.1.** Connexion Compte
 
 - **Fonctionnalité** : permet aux utilisateurs se connecter à leur compte existant
 - **Interface utilisateur** :
@@ -323,7 +328,7 @@ Description à fournir
       - **Dans le cas où il a déjà rentré son code de vérification concernant la création de compte** => Redirection vers le dashboard
       - **Dans le cas où il n'a pas déjà rentré son code de vérificaiton concernant la création de compte** => Redirection vers la vérification du compte
 
-### **4.1.2** Création Compte 
+#### **5.1.2** Création Compte 
 - **Fonctionnalité** : Permet aux nouveaux utilisateurs de créer un compte.
 - **Interface utilisateur** :
    - Champs de saisie pour : nom d'utilisateur, adresse e-mail, mot de passe, confirmation du mot de passe
@@ -337,10 +342,6 @@ Description à fournir
 - **Redirection** :
    - Après la création réussie : Page de confirmations avec les instructions pour vérifier l'email
 
-### **4.3** Gestion Exercices 
-***Fonctionnalité***: permet utilisateurs enregistrer suivre exercices 
-***Suivi performances***: enregistre résultats exercices analyse ultérieure 
-***Recommandations***: propose ajustements basés performances précédentes 
 
 ## Scénarios Utilisation 
 
