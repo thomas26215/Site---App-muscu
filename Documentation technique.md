@@ -295,7 +295,6 @@ Description à fournir
 
 ## Fonctions de classes
 
-Voici la documentation technique réorganisée en quatre sections principales, conformément à votre demande :
 
 #### **4.1.** Gestion des utilisateurs
 
@@ -327,14 +326,29 @@ Voici la documentation technique réorganisée en quatre sections principales, c
 ##### **4.1.2.** Ajout et gestion des utilisateurs
 ###### **4.1.2.1. `addUser`**
 - **Objectif** : Ajouter un nouvel utilisateur à la base de données.
-- **Paramètre** : 
-  - `informations` (array) : Les informations de l'utilisateur à ajouter.
-- **Retour** : 
+- **Paramètre** :
+  - `informations` (array) : Les informations de l'utilisateur à ajouter, contenant les clés suivantes :
+    - `pseudo` (string) : Le pseudo de l'utilisateur.
+    - `email` (string) : L'adresse email de l'utilisateur.
+    - `mot_de_passe` (string) : Le mot de passe de l'utilisateur.
+    - `nom` (string) : Le nom de l'utilisateur.
+    - `prenom` (string) : Le prénom de l'utilisateur.
+    - `date_naissance` (string) : La date de naissance au format 'YYYY-MM-DD'.
+    - `genre` (string) : Le genre de l'utilisateur (par exemple, 'homme', 'femme').
+- **Retour** :
   - **Boolean** : `true` si l'utilisateur a été ajouté avec succès, sinon `false`.
 - **Exceptions** : Peut lancer une exception en cas d'erreur lors de l'insertion.
 - **Exemple** :
   ```php
-  $success = addUser(['pseudo' => 'Thomas', 'email' => 'example@gmail.com', ...]);
+  $success = addUser([
+      'pseudo' => 'Thomas',
+      'email' => 'example@gmail.com',
+      'mot_de_passe' => 'securepassword',
+      'nom' => 'Thomas',
+      'prenom' => 'Venouil',
+      'date_naissance' => '2005-09-18',
+      'genre' => 'homme'
+  ]);
   ```
 
 ###### **4.1.2.2. `deleteUser`**
@@ -382,7 +396,6 @@ Voici la documentation technique réorganisée en quatre sections principales, c
 
 ---
 
-Voici la documentation technique réorganisée et complétée pour les fonctions concernant la vérification des comptes et la validation des emails :
 
 #### **4.3.** Gestion des codes de vérification
 
@@ -400,9 +413,21 @@ Voici la documentation technique réorganisée et complétée pour les fonctions
   $isVerified = verifyAccountWithCode('CODE123', 'example@gmail.com');
   ```
 
+###### **4.3.1.2. `generateAndStoreVerificationCode`**
+- **Objectif** : Générer un code de vérification aléatoire et le stocker dans la base de données pour l'email spécifié.
+- **Paramètre** :
+  - `email` (string) : L'email de l'utilisateur pour lequel le code doit être généré.
+- **Retour** :
+  - Aucun retour direct, mais peut afficher un message d'erreur en cas d'échec.
+- **Exceptions** : Peut lancer une exception en cas d'erreur lors de la mise à jour de la base de données.
+- **Exemple** :
+  ```php
+  generateAndStoreVerificationCode('example@gmail.com');
+  ```
+
 ---
 
-#### **4.4.** Validation des emails
+#### **4.4. Validation des emails**
 
 ##### **4.4.1.** Vérification des statuts des emails
 ###### **4.4.1.1. `isEmailVerified`**
@@ -421,7 +446,8 @@ Voici la documentation technique réorganisée et complétée pour les fonctions
 - **Objectif** : Confirmer le code de vérification en supprimant le code associé à l'utilisateur.
 - **Paramètre** :
   - `email` (string) : L'email dont le code doit être confirmé.
-- **Retour** : Aucun retour direct, mais peut afficher un message d'erreur en cas d'échec.
+- **Retour** :
+  - Aucun retour direct, mais peut afficher un message d'erreur en cas d'échec.
 - **Exceptions** : Peut lancer une exception en cas d'erreur lors de la suppression du code.
 - **Exemple** :
   ```php
@@ -429,8 +455,6 @@ Voici la documentation technique réorganisée et complétée pour les fonctions
   ```
 
 ---
-
-
 
 ## Fonctionnalités
 
