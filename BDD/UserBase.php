@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 class UserBase {
     private $db;
     private $dataSourceName;
@@ -171,6 +174,71 @@ class UserBase {
     }
 
 
+
+    public function askNewPassword($email) {
+        try {
+            // Vérifiez si l'email est vérifié
+            if ($this->isEmailVerified($email) == 1) {
+                $userId = $this->getIdWithEmail($email);
+                $this->deleteRecuperationMDP($userId);
+                // Générer un token unique pour la récupération du mot de passe
+                $token = bin2hex(random_bytes(16)); // Générer un token aléatoire
+
+                // Insérer les données de récupération du mot de passe
+                return $this->insertRecuperationMotDePasse([
+                    'utilisateur_id' => $userId,
+                    'token' => $token,
+                    'date_expiration' => date('Y-m-d H:i:s', strtotime('+1 hour')) // Exemple d'expiration dans 1 heure
+                ]);
+            } else {
+                return false; // L'email n'est pas vérifié
+            }
+        } catch (Exception $e) {
+            echo "Erreur lors de la génération du MDP : " . htmlspecialchars($e->getMessage());
+            return false; // Retourner false en cas d'erreur
+        }
+    }
+
+
+    public function insertNewPassword($email, $code, $newPassword) {
+        try {
+            // Vérifier si le code de récupération est valide
+            $recoveryData = $this->getColumnWithParameter('recuperation_mot_de_passe', ['token' => $code], ['token', 'utilisateur_id']);
+
+            if ($recoveryData) {
+
+                echo "yes"; 
+                // Vérifier si l'email correspond à l'utilisateur associé au code
+                $userId = $this->getIdWithEmail($email);
+                
+
+                echo $userId;
+                var_dump($recoveryData[0]['utilisateur_id']);
+
+                
+                if ($userId == $recoveryData[0]['utilisateur_id']) {
+                    // Hacher le nouveau mot de passe
+                    $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+                    
+                    // Mettre à jour le mot de passe de l'utilisateur
+                    // Mettre à jour le mot de passe de l'utilisateur
+                    $this->update('utilisateurs', ['mot_de_passe' => $hashedPassword], ['id' => $userId]);              
+                    // Suppression de la demande de réinitialisation de mot de passe
+                    $this->deleteRecuperationMDP($userId);
+                    
+                    echo "Mot de passe mis à jour avec succès.";
+                } else {
+                    echo "L'email ne correspond pas au code de récupération.";
+                }
+            } else {
+                echo "Code de récupération invalide.";
+            }
+        } catch (Exception $e) {
+            echo "Erreur : " . $e->getMessage();
+        }
+    }
+
+
 /*---------------------------------Requêtes de supression---------------------------------*/
 
 
@@ -261,6 +329,7 @@ class UserBase {
     public function deleteRecuperationMDP($userId){
         return $this->deleteRelatedData('recuperation_mot_de_passe', $userId);
     }
+    
 
     /**
      * Supprime les vérifications d'email expirées et les données associées.
@@ -480,19 +549,23 @@ class UserBase {
      * @throws Exception Si des informations requises ne sont pas fournies ou si une erreur se produit lors de l'insertion.
      */
     public function insertRecuperationMotDePasse($recuperationData) {
+        // Vérifiez que toutes les données nécessaires sont présentes
         if (empty($recuperationData['utilisateur_id']) || empty($recuperationData['token']) || empty($recuperationData['date_expiration'])) {
             throw new Exception("L'identifiant de l'utilisateur, le token et la date d'expiration doivent être fournis.");
         }
 
+        // Insérer les données dans la base de données
         $success = $this->insertRelatedData('recuperation_mot_de_passe', $recuperationData);
         if (!$success) {
             throw new Exception("Erreur lors de l'insertion pour la récupération du mot de passe.");
         }
+
+        return true; // Retourner true si l'insertion a réussi
     }
 
     /**
      * Insère une vérification d'email dans la base de données.
-     *
+        *
      * @param array $verificationData Les données pour la vérification d'email à insérer.
      * @throws Exception Si des informations requises ne sont pas fournies ou si une erreur se produit lors de l'insertion.
      */
@@ -611,6 +684,54 @@ class UserBase {
         } catch (PDOException $e) {
             // Log l'erreur et la relancer
             error_log("Erreur lors de la récupération des données : " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+
+/*---------------------UPDATE------------------------*/
+
+    /**
+    * Met à jour des données dans une table en fonction des paramètres spécifiés.
+    *
+    * @param string $table Le nom de la table.
+    * @param array $updateData Un tableau associatif des données à mettre à jour.
+    * @param array $whereConditions Un tableau associatif des conditions WHERE.
+    * @return int Le nombre de lignes affectées.
+    * @throws PDOException Si une erreur de base de données se produit.
+    */
+    public function update($table, $updateData, $whereConditions)
+    {
+        try {
+            // Construire la partie SET de la requête
+            $setClauses = [];
+            $values = [];
+            foreach ($updateData as $column => $value) {
+                $setClauses[] = "$column = :set_$column";
+                $values[":set_$column"] = $value;
+            }
+            $setClause = implode(', ', $setClauses);
+
+            // Construire la partie WHERE de la requête
+            $whereClauses = [];
+            foreach ($whereConditions as $column => $value) {
+                $whereClauses[] = "$column = :where_$column";
+                $values[":where_$column"] = $value;
+            }
+            $whereClause = implode(' AND ', $whereClauses);
+
+            // Construire la requête complète
+            $query = "UPDATE $table SET $setClause WHERE $whereClause";
+
+            // Préparer et exécuter la requête
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($values);
+
+            // Retourner le nombre de lignes affectées
+            return $stmt->rowCount();
+        } catch (PDOException $e) {
+            // Log l'erreur et la relancer
+            error_log("Erreur lors de la mise à jour des données : " . $e->getMessage());
             throw $e;
         }
     }
