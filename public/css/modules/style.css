@@ -1,0 +1,156 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+}
+
+/*
+ *
+ * Partie générale (containers)
+ *
+ */
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 100px;
+    padding-right: 100px;
+    padding-left: 100px;
+    height: calc(100% - 200px);
+    gap: 100px;
+}
+
+.container > div {
+    box-shadow: 25px 30px 55px #5557;
+    border-radius: 13px;
+    overflow: hidden;
+    padding: 40px;
+}
+
+.left {
+    width: 15%;
+    min-width: 200px;
+    max-width: 300px;
+    display: flex;
+    --linear-grad: linear-gradient(to right, #141e30, #243b55);
+    background: var(--linear-grad);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.right {
+    flex: 1;
+    min-width: 0;
+    background-color: #fdfffc;
+    padding-right: 20px;
+}
+
+/*
+ *
+ * Partie menu
+ *
+ *
+ *
+ */
+
+.nav-menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav-menu li {
+    margin: 0px 0;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #fdfffc;
+    font-weight: bold;
+    font-size: 1.5vw;
+    display: block;
+    padding: 0.5vw 1.6vw;
+    margin: 0;
+}
+
+.left .nav-menu li#selected {
+    background-color: #fdfffc;
+    border-radius: 10px;
+}
+.left .nav-menu li#selected a {
+    color: var(--linear-grad);
+}
+
+.logout {
+    margin-top: auto;
+}
+
+.logout a {
+    text-decoration: none;
+    color: #cfcfea;
+    font-weight: bold;
+    font-size: 1.5vw;
+    padding: 0.5vw;
+    padding-left: 3vw;
+    padding-right: 3vw;
+    display: inline-block;
+    border: 3px, #cfcfea, solid;
+    border-radius: 10px;
+}
+.logout a:hover {
+    color: var(--linear-grad);
+    background-color: #cfcfea;
+}
+
+/*
+ *
+ *
+ * Partie dashboard
+ *
+ *
+ *
+ */
+
+.right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right div {
+    background-color: red;
+    width: 50px;
+    height: 50px;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+    .left,
+    .right {
+        width: 100%;
+        max-width: none;
+    }
+    .nav-menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .nav-menu a {
+        font-size: 4vw;
+        padding: 2vw 4vw;
+    }
+    .logout a {
+        font-size: 3vw;
+    }
+}

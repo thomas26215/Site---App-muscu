@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion || Inscription</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ asset('css/auth/auth.css') }}">
+
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="{{ app.request.uri }}" id="signupForm" method="POST">
+                <h1>Créer un compte</h1>
+                <div class="step-indicator">
+                    <span class="step active"></span>
+                    <span class="step"></span>
+                    <span class="step"></span>
+                </div>
+                <div class="step-content" id="step1">
+                    <div class="infield">
+                        <input type="text" placeholder="Nom" name="nom" required/>
+                    </div>
+                    <div class="infield">
+                        <input type="text" placeholder="Prénom" name="prenom" required/>
+                    </div>
+                    <div class="infield">
+                        <input type="text" placeholder="Pseudo" name="pseudo" required/>
+                    </div>
+                    <button type="button" onclick="nextStep(1)">Suivant</button>
+                </div>
+                <div class="step-content" id="step2" style="display:none;">
+                    <div class="infield">
+                        <select name="genre" required>
+                            <option value="">Sélectionnez le genre</option>
+                            <option value="homme">Homme</option>
+                            <option value="femme">Femme</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="infield">
+                        <input type="date" placeholder="Date de naissance" name="dateNaissance" required/>
+                    </div>
+                    <button type="button" onclick="prevStep(2)">Précédent</button>
+                    <button type="button" onclick="nextStep(2)">Suivant</button>
+                </div>
+                <div class="step-content" id="step3" style="display:none;">
+                    <div class="infield">
+                        <input type="email" placeholder="Email" name="email" required/>
+                    </div>
+                    <div class="infield">
+                        <input type="password" placeholder="Mot de passe" name="password" required/>
+                    </div>
+                    <div class="infield">
+                        <input type="password" placeholder="Confirmer le mot de passe" name="confirmPassword" required/>
+                    </div>
+                    <button type="button" onclick="prevStep(3)">Précédent</button>
+                    <button type="submit" name="submit" value="sign up">S'inscrire</button>
+                </div>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="{{ app.request.uri }}" method="POST" id="signinForm">
+                <h1>Se connecter</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>Ou utiliser votre email pour vous connecter</span>
+                <div class="infield">
+                    {% if emailUsed or erreurPassword %}
+                        <input type="email" placeholder="Email" name="email" value="{{ app.request.request.get('email') }}" 
+                            style="border: 3px red solid; border-radius: 5px; color: red; font-weight: bold;" />
+                    {% else %}
+                        <input type="email" placeholder="Email" name="email" />
+                    {% endif %}
+
+               {% if emailUsed %}
+                <p style="margin: 0; color: brown; font-weight: bold;">
+                    Cette adresse email est déjà utilisée ! Essayez de vous connecter avec celle-ci.
+                </p>
+            {% endif %}
+
+            <div class="infield">
+                {% if erreurPassword %}
+                    <input type="password" placeholder="Mot de passe" name="password" 
+                        style="border: 3px red solid; border-radius: 5px;" />
+                {% else %}
+                    <input type="password" placeholder="Mot de passe" name="password" />
+                {% endif %}
+            </div>
+
+                    
+                </div>
+               {% if erreurPassword %}
+                    <p style="margin: 0; color: red; font-weight: bold;">Email ou mot de passe incorrect</p>
+                {% endif %}
+
+                <a href="{{ path('managementAuth', {'page': "forget_password"}) }}" class="forgot">Mot de passe oublié ?</a>
+
+                <button type="submit" name="submit" value="sign in">Se connecter</button>
+            </form>
+        </div>
+        <div class="overlay-container" id="overlayCon">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Bon retour !</h1>
+                    <p>Pour vous connecter, rentrez vos identifiants</p>
+                    <button>Se connecter</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Bienvenue !</h1>
+                    <p>Entrez vos informations personnelles et venez vous entraîner !</p>
+                    <button>S'enregistrer</button>
+                </div>
+            </div>
+            <button id="overlayBtn"></button>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const overlayBtn = document.getElementById('overlayBtn');
+        const signupForm = document.getElementById('signupForm');
+
+        overlayBtn.addEventListener('click', () => {
+            container.classList.toggle('right-panel-active');
+            overlayBtn.classList.remove('btnScaled');
+            window.requestAnimationFrame(() => {
+                overlayBtn.classList.add('btnScaled');
+            });
+        });
+
+        function validateStep(stepNumber) {
+            const stepElement = document.getElementById('step' + stepNumber);
+            const inputs = stepElement.querySelectorAll('input, select');
+            for (let input of inputs) {
+                if (input.hasAttribute('required') && !input.value) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateNextButton(stepNumber) {
+            const nextButton = document.querySelector(`#step${stepNumber} button[onclick^="nextStep"]`);
+            if (nextButton) {
+                nextButton.disabled = !validateStep(stepNumber);
+            }
+        }
+
+        function nextStep(currentStep) {
+            if (validateStep(currentStep)) {
+                document.getElementById('step' + currentStep).style.display = 'none';
+                let nextStepElement = document.getElementById('step' + (currentStep + 1));
+                nextStepElement.style.display = 'block';
+                nextStepElement.style.animation = 'none';
+                nextStepElement.offsetHeight; // Déclenche un reflow
+                nextStepElement.style.animation = 'fadeInStep 0.5s ease-out';
+                document.querySelectorAll('.step-indicator .step')[currentStep].classList.add('active');
+                updateNextButton(currentStep + 1);
+            }
+        }
+
+        function prevStep(currentStep) {
+            document.getElementById('step' + currentStep).style.display = 'none';
+            let prevStepElement = document.getElementById('step' + (currentStep - 1));
+            prevStepElement.style.display = 'block';
+            prevStepElement.style.animation = 'none';
+            prevStepElement.offsetHeight; // Déclenche un reflow
+            prevStepElement.style.animation = 'fadeInStep 0.5s ease-out';
+            document.querySelectorAll('.step-indicator .step')[currentStep - 1].classList.remove('active');
+            updateNextButton(currentStep - 1);
+        }
+
+        // Ajouter des écouteurs d'événements pour chaque étape
+        for (let i = 1; i <= 3; i++) {
+            const stepElement = document.getElementById('step' + i);
+            const inputs = stepElement.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => updateNextButton(i));
+            });
+        }
+
+        // Initialiser l'état du bouton "Suivant" pour la première étape
+        updateNextButton(1);
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,218 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --linear-grad: linear-gradient(to right, #141e30, #243b55);
+    --grad-clr1: #141e30;
+    --grad-clr2: #243b55;
+}
+
+body {
+    height: 100vh;
+    background: #f6f5f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Poppins", sans-serif;
+}
+
+.container {
+    width: 90%; /* Utilise 90% de la largeur disponible */
+    max-width: 850px; /* Limite la largeur maximale à 850px */
+    background-color: #fff;
+    box-shadow: 25px 30px 55px #5557; /* Ombre identique à l'original */
+    border-radius: 13px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px; /* Padding de 40px */
+    margin: 20px auto; /* Centre le container et ajoute une marge en haut et en bas */
+    box-sizing: border-box; /* Inclut le padding dans la largeur totale */
+}
+
+.container {
+    padding-left: 150px;
+    padding-right: 150px;
+}
+
+@media screen and (max-width: 320px) {
+    .container {
+        width: 95%; /* Utilise presque toute la largeur */
+        padding: 20px; /* Réduit le padding pour s'adapter à l'écran */
+        padding-top: 2px;
+        padding-bottom: 2px;
+        margin: 10px auto; /* Marges réduites */
+        margin-top: 2px;
+        margin-bottom: 2px;
+        min-height: 500px; /* Ajuste la hauteur minimale */
+    }
+
+    h1 {
+        font-size: 1.3rem; /* Réduit la taille de la police du titre */
+        margin-bottom: 20px; /* Réduit la marge en bas du titre */
+    }
+
+    .container input {
+        font-size: 1rem; /* Réduit la taille de la police des inputs */
+        padding: 10px; /* Réduit le padding des inputs */
+        margin: 2px;
+    }
+
+    .container button {
+        font-size: 0.6rem; /* Réduit la taille de la police du bouton */
+        padding: 10px 30px; /* Ajuste le rembourrage du bouton */
+        margin: 15px;
+    }
+
+    .container .infield {
+        margin: 5px 0; /* Garde l'espacement entre les champs */
+    }
+
+    .container span {
+        font-size: 12px; /* Réduit la taille de la police du texte descriptif */
+    }
+
+    a {
+        font-size: 12px; /* Réduit la taille de la police des liens */
+    }
+}
+
+@media screen and (min-width: 321px) and (max-width: 600px) {
+    .container {
+        width: 95%; /* Utilise plus de largeur sur les petits écrans */
+        padding: 40px; /* Conserve le padding de 40px */
+        margin: 10px auto; /* Réduit la marge sur les petits écrans */
+        min-height: 600px; /* Ajuste la hauteur minimale pour les petits écrans */
+    }
+}
+
+/* Pour les tablettes */
+@media screen and (min-width: 601px) and (max-width: 1024px) {
+    .container {
+        width: 80%;
+        padding: 100px;
+        min-height: 800px;
+    }
+
+    h1 {
+        font-size: 3rem;
+        margin-bottom: 30px;
+    }
+
+    input {
+        font-size: 1.4rem;
+        padding: 15px 20px;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 15px 50px;
+    }
+
+    .infield {
+        margin: 20px 0;
+    }
+    .container span {
+        font-size: 20px;
+    }
+    .container a {
+        font-size: 20px;
+    }
+    .container button {
+        font-size: 25px; /* Augmentez la taille de la police */
+        padding: 20px 60px; /* Augmentez le rembourrage */
+    }
+}
+h1 {
+    text-align: center;
+}
+
+span {
+    text-align: justify;
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    color: var(--grad-clr1);
+    margin-bottom: 20px;
+}
+
+span {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.infield {
+    position: relative;
+    margin: 5px 0 !important;
+    width: 100%;
+}
+
+input {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #f3f3f3;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
+
+label {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%);
+    width: 0%;
+    height: 2px;
+    background: var(--linear-grad);
+    transition: 0.3s;
+}
+
+input:focus ~ label {
+    width: 100%;
+}
+
+button {
+    border-radius: 5px;
+    border: 1px solid var(--grad-clr1);
+    background: var(--grad-clr2);
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+button:hover {
+    background: #fff;
+    color: var(--grad-clr1);
+}
+
+a {
+    color: #333;
+    font-size: 14px;
+    text-decoration: none;
+    margin: 15px 0;
+}
+
+a.forgot {
+    padding-bottom: 3px;
+    border-bottom: 2px solid #eee;
+}

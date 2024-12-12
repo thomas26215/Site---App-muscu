@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Controller\Account;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Model\BDD\UserBase; // Importation de UserBase
+
+class AuthController extends AbstractController
+{
+    private $base;
+
+    // Injection de la dépendance UserBase via le constructeur
+    public function __construct(UserBase $base)
+    {
+        $this->base = $base; // Affectation de l'instance UserBase à la propriété $base
+    }
+
+    #[Route("/auth/auth", name: "auth", methods: ['GET', 'POST'])]
+    public function index(Request $request): Response
+    {
+        $emailUsed = false;
+
+        if ($request->request->get('submit') === 'sign up') {
+            $nom = htmlspecialchars($request->request->get('nom', ''));
+            $prenom = htmlspecialchars($request->request->get('prenom', ''));
+            $pseudo = htmlspecialchars($request->request->get('pseudo', ''));
+            $genre = htmlspecialchars($request->request->get('genre', ''));
+            $email = filter_var($request->request->get('email', ''), FILTER_VALIDATE_EMAIL);
+            $password = $request->request->get('password', '');
+            $confirmPassword = $request->request->get('confirmPassword', '');
+            $dateNaissance = htmlspecialchars($request->request->get('dateNaissance', ''));
+
+            if ($nom && $prenom && $pseudo && $genre && $email && $password && $confirmPassword && $dateNaissance) {
+                if ($password !== $confirmPassword) {
+                    $this->addFlash('error', 'Les mots de passe ne correspondent pas.');
+                } else {
+                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                    $userData = [
+                        'nom' => $nom,
+                        'prenom' => $prenom,
+                        'pseudo' => $pseudo,
+                        'genre' => $genre,
+                        'email' => $email,
+                        'mot_de_passe' => $hashedPassword,
+                        'date_naissance' => $dateNaissance,
+                    ];
+
+                    try {
+                        if ($this->base->checkIfMailExist($email)) {
+                            $this->addFlash('error', 'L\'email est déjà utilisé.');
+                            $emailUsed = true;
+                        } else {
+                            if ($this->base->addUser($userData)) {
+                                $this->addFlash('success', 'Inscription réussie !');
+
+                                // Générer un code de vérification et envoyer l'email
+                                $this->base->generateAndStoreVerificationCode($email);
+                                // Vous pouvez appeler une méthode pour envoyer un email ici
+
+                                // Rediriger vers une page de vérification
+                                return $this->redirectToRoute('verify_code');
+                            } else {
+                                $this->addFlash('error', 'Erreur lors de l\'inscription.');
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        $this->addFlash('error', 'Erreur lors de l\'inscription : ' . $e->getMessage());
+                    }
+                }
+            } else {
+                $this->addFlash('error', 'Tous les champs sont requis.');
+            }
+        }
+
+        return $this->render('login/index.html.twig', [
+            'controller_name' => self::class,
+            'emailUsed' => $emailUsed,
+            'erreurPassword' => false,
+        ]);
+    }
+}
+

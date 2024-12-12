@@ -1,0 +1,18 @@
+{# templates/reset_password.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block form_fields %}
+    <div class="infield">
+        <input type="email" placeholder="Email" name="email" required />
+        <label></label>
+    </div>
+{% endblock %}
+
+{% set title = 'Réinitialiser le mot de passe' %}
+{% set description = 'Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.' %}
+{% set value_button = 'newPassword' %}
+{% set button_text = 'Demander un nouveau mot de passe' %}
+{% set back_link = path('auth') %}
+{% set back_text = 'Retour à la connexion' %}
+{% set action = path('forget_password') %} {# Définir l'action du formulaire vers la route appropriée #}
+

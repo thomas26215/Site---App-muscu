@@ -1,0 +1,23 @@
+{# templates/forget_password.html.twig #}
+{% extends 'user_management.template.html.twig' %}
+
+{% block form_fields %}
+    <div class="infield">
+        <input type="email" id="email" placeholder="Entrez votre email" name="email" required />
+        <label></label>
+    </div>
+    <div class="infield">
+        <input type="text" id="code" placeholder="Entrez le code" name="code" required />
+        <label></label>
+    </div>
+{% endblock %}
+
+{% set title = 'Vérifier le compte' %}
+{% set description = 'Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.' %}
+{% set value_button = 'verifyAccount' %}
+{% set button_text = 'Vérifier le compte' %}
+{% set back_link = path('auth') %}
+{% set back_text = 'Retour à la connexion' %}
+{% set action = path('managementAuth', { page: 'verify_account' }) %}
+
+
