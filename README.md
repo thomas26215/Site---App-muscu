@@ -7,6 +7,7 @@
 - [Installation](#installation)
 - [Utilisation](#utilisation)
 - [Contributions](#contributions)
+- [Idées](#idees)
 - [Droits d'auteur](#droits-dauteur)
 - [Contact](#contact)
 
@@ -57,6 +58,10 @@ Les contributions sont les bienvenues ! Pour contribuer au projet :
 3. Commitez vos modifications (`git commit -m 'Ajout d'une nouvelle fonctionnalité'`).
 4. Poussez la branche (`git push origin feature/nouvelle-fonctionnalité`).
 5. Ouvrez une Pull Request.
+
+## Idées
+Voici les idées à intégrer
+1. Ajoute des exercices évolutifs à intégrer dans la séance. Exemple : Pour faire les handstand pushup, il faut maîtriser le pushup, le pushup surélevé, le handstand ... Jusqu'au pushup. Il faudrait pouvoir intégrer ce type d'exercice évolutif dans une séance de muscu
 
 ## Droits d'auteur
 Ce projet est protégé par les droits d'auteur. Tous les droits sont réservés à **[Thomas VENOUIL]**. Aucune partie de ce projet ne peut être reproduite, distribuée ou modifiée sans l'autorisation écrite préalable du titulaire des droits.
